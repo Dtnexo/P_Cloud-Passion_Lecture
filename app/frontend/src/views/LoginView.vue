@@ -40,6 +40,10 @@ const handleLogin = async () => {
         v-model="mdp"
       />
       <input type="submit" value="Submit" />
+      <button>
+        Se connecter avec Microsoft
+        <img src="../../public/images/logoMircosoft.png" alt="image de couverture" />
+      </button>
       <p v-if="error" style="color: red">{{ error }}</p>
       <p>
         Pas encore de compte ?
@@ -116,9 +120,75 @@ form input[type='submit']:hover {
   background: linear-gradient(90deg, #6096ba 0%, #457b9d 100%);
 }
 
+form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: linear-gradient(90deg, #0078d4 0%, #005a9e 100%);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(2, 90, 204, 0.14);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+form button img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+form button {
+  gap: 8px;
+}
+
+form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(2, 90, 204, 0.18);
+  opacity: 0.98;
+}
+
+form button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(2, 90, 204, 0.12);
+}
+
+form button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 120, 212, 0.12);
+}
+
+/* Si tu veux ajouter une icône à gauche du texte */
+form button .ms-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Respecter les préférences de réduction d'animations */
+@media (prefers-reduced-motion: reduce) {
+  form button {
+    transition: none;
+    transform: none;
+  }
+}
+
 p {
   text-align: center;
-  margin-top: 22px;
   font-size: 15px;
   color: #1d3557;
 }

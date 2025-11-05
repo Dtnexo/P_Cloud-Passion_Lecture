@@ -84,7 +84,7 @@ function formatDate(dateStr) {
   })
 }
 
-const bookComments = ref([]) // [{ book, comments: [...] }]
+const bookComments = ref([])
 
 onMounted(() => {
   fetchComments()
