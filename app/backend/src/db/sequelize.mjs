@@ -10,17 +10,36 @@ import { ecrivains } from "./mock-ecrivain.mjs";
 import { evaluations } from "./mock-evaluer.mjs";
 import { EvaluationModel } from "../models/evaluer.mjs";
 
-const sequelize = new Sequelize(
-  "db_gestionnaireLivre", // Nom de la DB qui doit exister
-  "root", // Nom de l'utilisateur
-  "root", // Mot de passe de l'utilisateur
-  {
-    host: "localhost",
-    port: 6033,
-    dialect: "mysql",
-    logging: false,
+const DB_NAME = "db_gestionnaireLivre";
+
+const rootSequelize = new Sequelize("mysql", "root", "root", {
+  host: "localhost",
+  port: 6033,
+  dialect: "mysql",
+  logging: false,
+});
+
+async function initializeDatabase() {
+  try {
+    await rootSequelize.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;`);
+    await rootSequelize.query(`USE \`${DB_NAME}\`;`);
+    console.log(`Database '${DB_NAME}' ensured to exist.`);
+  } catch (error) {
+    console.error("Error creating database:", error);
+  } finally {
+    await rootSequelize.close();
   }
-);
+}
+
+await initializeDatabase();
+
+const sequelize = new Sequelize(DB_NAME, "root", "root", {
+  host: "localhost",
+  port: 6033,
+  dialect: "mysql",
+  logging: false,
+});
+
 // Le modèle product
 const Ouvrage = OuvrageModel(sequelize, DataTypes);
 const User = UserModel(sequelize, DataTypes);
