@@ -16,6 +16,11 @@ const handleLogin = async () => {
     error.value = "Nom d'utilisateur ou mot de passe incorrect"
   }
 }
+
+
+const msLogin = () => {
+  window.location.href = '/auth/microsoft/login'
+}
 </script>
 
 <template>
@@ -40,7 +45,7 @@ const handleLogin = async () => {
         v-model="mdp"
       />
       <input type="submit" value="Submit" />
-      <button>
+      <button @click="msLogin" type="button">
         Se connecter avec Microsoft
         <img src="../../public/images/logoMircosoft.png" alt="image de couverture" />
       </button>

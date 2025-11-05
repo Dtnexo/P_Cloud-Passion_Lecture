@@ -58,6 +58,9 @@ app.use("/api/books", booksRouter);
 import { userRouter } from "./routes/users.mjs";
 app.use("/api/users", auth, userRouter);
 
+import { msalRouter } from "./routes/MSAL.mjs";
+app.use("/api/msal", msalRouter);
+
 import { categoriesRouter } from "./routes/categories.mjs";
 app.use("/api/categories", auth, categoriesRouter);
 
