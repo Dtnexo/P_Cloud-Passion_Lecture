@@ -37,6 +37,7 @@ jobs:
           cp -r frontend/dist deploy/
           cp frontend/server.js deploy/
           cp frontend/package.json deploy/
+          cp frontend/package-lock.json deploy/
 
       - name: Upload deploy package
         uses: actions/upload-artifact@v4
