@@ -1,0 +1,40 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Lancer les tests (si présents)
+        run: npm test --if-present
+
+      - name: Construire le projet
+        run: npm run build
+
+      - name: Upload du build comme artefact (optionnel)
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
