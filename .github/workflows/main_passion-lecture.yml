@@ -46,7 +46,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vue-dist
-          path: .
+          path: dist
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -54,5 +54,5 @@ jobs:
         with:
           app-name: "passion-Lecture"
           slot-name: "Production"
-          package: frontend/dist
+          package: dist
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
