@@ -17,7 +17,6 @@ const handleLogin = async () => {
   }
 }
 
-
 const msLogin = () => {
   window.location.href = '/auth/microsoft/login'
 }
