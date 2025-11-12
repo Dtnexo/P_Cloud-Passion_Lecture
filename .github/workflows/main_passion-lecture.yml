@@ -54,5 +54,5 @@ jobs:
         with:
           app-name: "passion-Lecture"
           slot-name: "Production"
-          package: dist
+          package: frontend
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
