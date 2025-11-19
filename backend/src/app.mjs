@@ -7,6 +7,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 // Recréer __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,9 +18,9 @@ const app = express();
 // Configuration de CORS
 app.use(
   cors({
-    origin: "http://localhost:5173", // Autoriser uniquement cette origine
-    methods: ["GET", "POST", "PUT", "DELETE"], // Méthodes autorisées
-    credentials: true, // Si vous utilisez des cookies ou des headers d'authentification
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
 
