@@ -212,7 +212,7 @@ const clickFilter = () => {
         class="uploadedImage"
         :src="
           book && book.image && typeof book.image === 'string'
-            ? `http://localhost:3000${book.image}`
+            ? `https://passion-lecture-backend.azurewebsites.net/api/${book.image}`
             : ''
         "
         alt="Image actuelle"

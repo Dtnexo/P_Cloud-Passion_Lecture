@@ -40,7 +40,7 @@ if (!useLocal) {
 
 const redirectUri =
   process.env.AZURE_REDIRECT_URI ||
-  "http://localhost:3000/api/msal/microsoft/redirect";
+  "https://passion-lecture-backend.azurewebsites.net/api//api/msal/microsoft/redirect";
 
 msalRouter.get("/microsoft/login", (req, res) => {
   cca

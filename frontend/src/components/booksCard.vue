@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import dotenv from 'dotenv'
+
 const props = defineProps({
   book: {
     type: Object,
@@ -14,7 +16,7 @@ const link = computed(() => `/ouvrages/${props.book.ouvrage.ouvrage_id}`)
   <RouterLink :to="link" class="card">
     <div class="image-container">
       <img
-        :src="`http://localhost:3000${props.book.ouvrage.image}`"
+        :src="`https://passion-lecture-backend.azurewebsites.net/api/${props.book.ouvrage.image}`"
         alt="image de couverture du livre"
       />
     </div>
