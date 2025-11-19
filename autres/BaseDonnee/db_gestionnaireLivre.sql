@@ -21,8 +21,8 @@ SET time_zone = "+00:00";
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Création de la base de données
-CREATE DATABASE IF NOT EXISTS `db_gestionnaireLivre`;
-USE `db_gestionnaireLivre`;
+CREATE DATABASE IF NOT EXISTS `db_teisot`;
+USE `db_teisot`;
 
 -- Création de la table des utilisateurs
 CREATE TABLE t_user(

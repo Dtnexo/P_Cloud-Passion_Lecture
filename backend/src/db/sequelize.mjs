@@ -9,60 +9,39 @@ import { EcrivainModel } from "../models/ecrivain.mjs";
 import { ecrivains } from "./mock-ecrivain.mjs";
 import { evaluations } from "./mock-evaluer.mjs";
 import { EvaluationModel } from "../models/evaluer.mjs";
+import dotenv from "dotenv";
+dotenv.config();
 
-const DB_NAME = "db_gestionnaireLivre";
-
-const rootSequelize = new Sequelize("mysql", "root", "root", {
-  host: "localhost",
-  port: 6033,
-  dialect: "mysql",
-  logging: false,
-});
-
-async function initializeDatabase() {
-  try {
-    await rootSequelize.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;`);
-    await rootSequelize.query(`USE \`${DB_NAME}\`;`);
-    console.log(`Database '${DB_NAME}' ensured to exist.`);
-  } catch (error) {
-    console.error("Error creating database:", error);
-  } finally {
-    await rootSequelize.close();
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: "mysql",
+    logging: false,
   }
-}
-
-await initializeDatabase();
-
-const sequelize = new Sequelize(DB_NAME, "root", "root", {
-  host: "localhost",
-  port: 6033,
-  dialect: "mysql",
-  logging: false,
-});
-
-// Le modèle product
+);
 const Ouvrage = OuvrageModel(sequelize, DataTypes);
 const User = UserModel(sequelize, DataTypes);
 const Categorie = CategorieModel(sequelize, DataTypes);
 const Ecrivain = EcrivainModel(sequelize, DataTypes);
 const Evaluer = EvaluationModel(sequelize, DataTypes);
 let initDb = () => {
-  return sequelize
-    .sync({ force: true }) // Force la synchro => donc supprime les données également
-    .then((_) => {
-      importOuvrages();
-      importUser();
-      importCategorie();
-      importEcrivain();
-      importEvaluer();
-      console.log(
-        "La base de données db_gestionnaireLivre a bien été synchronisée"
-      );
-    });
+  return sequelize.sync({ force: true }).then((_) => {
+    importOuvrages();
+    importUser();
+    importCategorie();
+    importEcrivain();
+    importEvaluer();
+    console.log(
+      "La base de données db_gestionnaireLivre a bien été synchronisée"
+    );
+  });
 };
 
 const importOuvrages = () => {
-  // import tous les produits présents dans le fichier db/mock-product
   ouvrages.map((ouvrage) => {
     Ouvrage.create({
       titre: ouvrage.titre,
