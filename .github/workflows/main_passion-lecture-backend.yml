@@ -23,19 +23,20 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: npm ci --omit=dev
+        run: npm ci
 
-      - name: Prepare deployment folder
+      - name: Run tests (if any)
+        working-directory: backend
         run: |
-          mkdir deploy
-          cp -r backend/src deploy/
-          cp backend/package.json deploy/
-          cp backend/package-lock.json deploy/
-          if [ -f backend/.env ]; then cp backend/.env deploy/; fi
+          if grep -q "\"test\":" package.json; then
+            npm test
+          else
+            echo "No tests found, skipping."
+          fi
 
       - name: Create deployment ZIP
         run: |
-          cd deploy
+          cd backend
           zip -r ../backend.zip .
 
       - name: Upload backend artifact
@@ -50,4 +51,14 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/dow
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-zip
+          path: .
+
+      - name: Deploy backend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "passion-lecture"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
+          package: backend.zip
