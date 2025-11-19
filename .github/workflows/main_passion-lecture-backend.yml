@@ -35,11 +35,10 @@ jobs:
             echo "No tests found, skipping."
           fi
 
-      # Préparer le dossier de déploiement
       - name: Prepare deploy package
         run: |
           mkdir deploy
-          cp -r src deploy/
+          cp -r backend/src deploy/
           cp package.json deploy/
           cp package-lock.json deploy/
           if [ -f .env ]; then cp .env deploy/; fi
