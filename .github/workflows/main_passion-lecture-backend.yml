@@ -1,4 +1,4 @@
-name: Build and Deploy Node.js Backend to Azure
+name: Build and Deploy Backend to Azure
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
           cd backend
           zip -r ../backend.zip .
 
-      - name: Upload artifact
+      - name: Upload backend artifact
         uses: actions/upload-artifact@v4
         with:
           name: backend-zip
@@ -56,10 +56,9 @@ jobs:
           name: backend-zip
           path: .
 
-      - name: Deploy to Azure Web App
+      - name: Deploy backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: "passion-Lecture"
-          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
           package: backend.zip
