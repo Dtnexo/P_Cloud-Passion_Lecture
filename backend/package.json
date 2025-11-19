@@ -5,7 +5,8 @@
   "description": "Réaliser une API REST ",
   "main": "src/app.mjs",
   "scripts": {
-    "start": "nodemon src/app.mjs"
+    "start": "node src/app.mjs",
+    "dev": "nodemon src/app.mjs"
   },
   "author": "Diego Teixeira Nunes",
   "license": "ISC",
