@@ -39,9 +39,9 @@ jobs:
         run: |
           mkdir deploy
           cp -r backend/src deploy/
-          cp package.json deploy/
-          cp package-lock.json deploy/
-          if [ -f .env ]; then cp .env deploy/; fi
+          cp backend/package.json deploy/
+          cp backend/package-lock.json deploy/
+          if [ -f .env ]; then cp backend/.env deploy/; fi
 
       - name: Upload deploy package
         uses: actions/upload-artifact@v4
