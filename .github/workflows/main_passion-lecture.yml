@@ -21,20 +21,32 @@ jobs:
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install frontend dependencies
+      - name: Install dependencies
         working-directory: frontend
         run: npm ci
 
-      - name: Build frontend
+      - name: Build Vue app
         working-directory: frontend
         run: npm run build
 
-      - name: Prepare frontend ZIP
+      - name: Prepare deployment folder
         run: |
-          cd frontend
-          zip -r ../frontend.zip dist server.js package.json package-lock.json
+          mkdir deploy
+          cp -r frontend/dist deploy/
+          cp frontend/server.js deploy/
+          cp frontend/package.json deploy/
+          cp frontend/package-lock.json deploy/
 
-      - name: Upload artifact
+      - name: Install server dependencies (Express, Compression, etc.)
+        working-directory: deploy
+        run: npm ci --omit=dev
+
+      - name: Zip deployment package
+        run: |
+          cd deploy
+          zip -r ../frontend.zip .
+
+      - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-zip
