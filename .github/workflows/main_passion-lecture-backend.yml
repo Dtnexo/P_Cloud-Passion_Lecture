@@ -62,4 +62,4 @@ jobs:
           app-name: "passion-Lecture"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
-          package: backen
+          package: backend.zip
