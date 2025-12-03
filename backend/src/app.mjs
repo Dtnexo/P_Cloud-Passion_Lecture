@@ -10,19 +10,23 @@ import { dirname } from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Recréer __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
 
-// Configuration de CORS
+const port = process.env.PORT || 3000;
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL || "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(express.json());
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -36,24 +40,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Route pour gérer l'upload
 app.post("/api/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "Aucun fichier téléchargé." });
   }
 
-  // Retourner le chemin relatif de l'image
   res.json({ filePath: `/images/${req.file.filename}` });
 });
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
-app.use(express.json());
-
-app.use(express.static(path.join(__dirname, "public")));
-
-const port = 3000;
-
+// --- Importation des Routes API ---
 import { loginRouter } from "./routes/login.mjs";
 app.use("/api/login", loginRouter);
 
@@ -83,20 +80,23 @@ app.use(
 );
 
 import { sequelize, initDb } from "./db/sequelize.mjs";
-sequelize
-  .authenticate()
-  .then((_) =>
-    console.log("La connexion à la base de données a bien été établie")
-  )
-  .catch((error) => console.error("Impossible de se connecter à la DB"));
-initDb();
-
-app.use(({ res }) => {
-  const message =
-    "Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";
-  res.status(404).json(message);
-});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`);
+  console.log(`Le serveur a démarré et écoute sur le port : ${port}`);
+
+  sequelize
+    .authenticate()
+    .then((_) => {
+      console.log("La connexion à la base de données a bien été établie");
+      initDb();
+    })
+    .catch((error) =>
+      console.error("Impossible de se connecter à la DB", error)
+    );
+});
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({ message: "Ressource API introuvable" });
+  }
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
