@@ -105,5 +105,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: "passion-lecture-front"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_10E48B068CF9471B86403F0386409398 }}
+          publish-profile: ${{ AZURE_FRONTEND_NEW_PROFILE }}
           package: frontend-dist.zip
