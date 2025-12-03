@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import dotenv from 'dotenv'
 
 const props = defineProps({
   book: {
