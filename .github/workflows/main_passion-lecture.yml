@@ -104,6 +104,6 @@ jobs:
       - name: Deploy frontend to Azure Web App (Front)
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "passion-lecture-front"
+          app-name: "passion-lecture"
           publish-profile: ${{secrets.AZURE_FRONTEND_NEW_PROFILE }}
           package: frontend-dist.zip
