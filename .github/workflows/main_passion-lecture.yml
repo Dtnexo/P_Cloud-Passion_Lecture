@@ -33,12 +33,12 @@ jobs:
         working-directory: backend
         run: npm ci
 
-      - name: Move frontend assets to backend/public
+      - name: Move frontend assets to backend/src/public
         run: |
-          mkdir -p backend/public
-          cp -R frontend/dist/* backend/public/
+          mkdir -p backend/src/public
+          cp -R frontend/dist/* backend/src/public/
 
-      - name: Upload unified artifact (Backend Folder)
+      - name: Upload unified artifact
         uses: actions/upload-artifact@v4
         with:
           name: unified-app-folder
