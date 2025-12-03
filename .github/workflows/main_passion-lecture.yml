@@ -82,10 +82,10 @@ jobs:
           name: backend-zip
           path: .
 
-      - name: Deploy backend to Azure Web App (passion-lecture)
+      - name: Deploy backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "passion-lecture"
+          app-name: "passion-lecture-dfckdyh4ctamfcdd"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
           package: backend.zip
 
@@ -101,9 +101,9 @@ jobs:
           name: frontend-zip
           path: .
 
-      - name: Deploy frontend to Azure Web App (Front)
+      - name: Deploy frontend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "passion-lecture"
+          app-name: "passion-lecture-dfckdyh4ctamfcdd"
           publish-profile: ${{secrets.AZURE_FRONTEND_NEW_PROFILE }}
           package: frontend-dist.zip
