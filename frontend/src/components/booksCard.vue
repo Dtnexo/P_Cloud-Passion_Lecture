@@ -8,16 +8,14 @@ const props = defineProps({
     required: true,
   },
 })
+const DB_URL = import.meta.env.VITE_DB_URL
 const link = computed(() => `/ouvrages/${props.book.ouvrage.ouvrage_id}`)
 </script>
 
 <template>
   <RouterLink :to="link" class="card">
     <div class="image-container">
-      <img
-        :src="`https://passion-lecture-backend.azurewebsites.net/api/${props.book.ouvrage.image}`"
-        alt="image de couverture du livre"
-      />
+      <img :src="`${DB_URL}${props.book.ouvrage.image}`" alt="image de couverture du livre" />
     </div>
     <div class="titre">
       <p>{{ props.book.ouvrage.titre }}</p>

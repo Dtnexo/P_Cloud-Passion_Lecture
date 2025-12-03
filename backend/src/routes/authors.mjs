@@ -1,5 +1,6 @@
 import express from "express";
 import { Ecrivain, Ouvrage } from "../db/sequelize.mjs";
+import { auth } from "../auth/auth.mjs";
 
 const authorsRouter = express();
 
@@ -23,7 +24,7 @@ authorsRouter.get("/", (req, res) => {
     );
 });
 
-authorsRouter.get("/:id", (req, res) => {
+authorsRouter.get("/:id", auth, (req, res) => {
   Ecrivain.findByPk(req.params.id)
     .then((author) => {
       if (author == null) {
@@ -43,7 +44,7 @@ authorsRouter.get("/:id", (req, res) => {
     });
 });
 
-authorsRouter.get("/:id/books", (req, res) => {
+authorsRouter.get("/:id/books", auth, (req, res) => {
   Ecrivain.findByPk(req.params.id)
     .then((author) => {
       if (author == null) {

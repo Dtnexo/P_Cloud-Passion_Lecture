@@ -103,6 +103,7 @@ const canUpdate = computed(() => {
     return false
   }
 })
+const DB_URL = import.meta.env.VITE_DB_URL
 </script>
 
 <template>
@@ -112,7 +113,7 @@ const canUpdate = computed(() => {
   <div class="book-detail">
     <span v-if="moyenneNote !== null" class="moyenne-note"> ⭐ {{ moyenneNote }}/5 </span>
     <img
-      :src="`https://passion-lecture-backend.azurewebsites.net/api/${props.book.ouvrage.image}`"
+      :src="`${DB_URL}${props.book.ouvrage.image}`"
       :alt="`Couverture de ${book.titre}`"
       class="cover"
     />

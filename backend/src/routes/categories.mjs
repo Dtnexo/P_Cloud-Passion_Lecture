@@ -1,5 +1,6 @@
 import express from "express";
 import { Categorie, Ouvrage } from "../db/sequelize.mjs";
+import { auth } from "../auth/auth.mjs";
 
 const categoriesRouter = express();
 
@@ -24,7 +25,7 @@ categoriesRouter.get("/", (req, res) => {
     );
 });
 
-categoriesRouter.get("/:id", (req, res) => {
+categoriesRouter.get("/:id", auth, (req, res) => {
   Categorie.findByPk(req.params.id)
     .then((categorie) => {
       if (categorie == null) {
@@ -45,7 +46,7 @@ categoriesRouter.get("/:id", (req, res) => {
     );
 });
 
-categoriesRouter.get("/:id/books", (req, res) => {
+categoriesRouter.get("/:id/books", auth, (req, res) => {
   Categorie.findByPk(req.params.id)
     .then((categorie) => {
       if (categorie == null) {

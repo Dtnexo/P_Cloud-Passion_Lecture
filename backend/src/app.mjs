@@ -10,19 +10,20 @@ import { dirname } from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"], // Pour autoriser votre token
+};
+
+// Recréer __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
-
 const port = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+// Configuration de CORS
+app.use(cors(corsOptions));
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -64,10 +65,10 @@ import { msalRouter } from "./routes/MSAL.mjs";
 app.use("/api/msal", msalRouter);
 
 import { categoriesRouter } from "./routes/categories.mjs";
-app.use("/api/categories", auth, categoriesRouter);
+app.use("/api/categories", categoriesRouter);
 
 import { authorsRouter } from "./routes/authors.mjs";
-app.use("/api/authors", auth, authorsRouter);
+app.use("/api/authors", authorsRouter);
 
 import { evaluerRouter } from "./routes/evaluer.mjs";
 app.use("/api/evaluations", auth, evaluerRouter);

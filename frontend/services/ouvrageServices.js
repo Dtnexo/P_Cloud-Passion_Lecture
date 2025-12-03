@@ -1,10 +1,9 @@
-import UpdateBook from '@/components/updateBook.vue'
 import axios from 'axios'
 
 let token = localStorage.getItem('token') || null
 
 const apiClient = axios.create({
-  baseURL: 'https://passion-lecture-backend.azurewebsites.net/api/',
+  baseURL: import.meta.env.VITE_DB_URL + '/api',
   withCredentials: false,
   headers: {
     Accept: 'application/json',

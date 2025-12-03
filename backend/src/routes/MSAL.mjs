@@ -63,7 +63,7 @@ msalRouter.get("/microsoft/redirect", async (req, res) => {
       privateKey,
       { expiresIn: "24h" }
     );
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.FRONTEND_URL;
 
     const redirectTo = `${frontendUrl}/msal-callback?token=${token}`;
     return res.redirect(redirectTo);
