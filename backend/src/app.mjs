@@ -50,6 +50,8 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, "public")));
+
 const port = 3000;
 
 import { loginRouter } from "./routes/login.mjs";
