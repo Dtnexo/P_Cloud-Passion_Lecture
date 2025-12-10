@@ -10,12 +10,12 @@ const booksRouter = express();
 /**
  * @swagger
  * /api/books:
- * get:
- * summary: Récupérer tous les ouvrages
- * description: Retourne la liste des ouvrages avec des filtres optionnels (titre, nom_editeur).
- * responses:
- * 200:
- * description: Liste des ouvrages.
+ *   get:
+ *     summary: Récupérer tous les ouvrages
+ *     description: Retourne la liste des ouvrages avec des filtres optionnels (titre, nom_editeur).
+ *     responses:
+ *       200:
+ *         description: Liste des ouvrages.
  */
 
 booksRouter.get("/", (req, res) => {
@@ -43,14 +43,17 @@ booksRouter.get("/", (req, res) => {
     order: [["createdAt", "DESC"]],
   }).then((ouvrages) => {
     if (ouvrages.length === 0) {
-      res.json([]);
+      res.json({
+        message: "La liste des ouvrages a bien été récupérée",
+        data: [],
+      });
     } else {
       const books = Promise.all(
         ouvrages.map(async (ouvrage) => {
           const cat = await Categorie.findByPk(ouvrage.categorie_fk);
           const ecri = await Ecrivain.findByPk(ouvrage.ecrivain_fk);
           return {
-            ...ouvrage.toJSON(),
+            ouvrage: ouvrage,
             categorie: cat ? cat.nom : null,
             écrivain: ecri ? ecri.prenom + " " + ecri.nom : null,
           };
@@ -58,7 +61,10 @@ booksRouter.get("/", (req, res) => {
       );
       books
         .then((result) => {
-          res.status(200).json(result);
+          res.status(200).json({
+            message: "La liste des ouvrages a bien été récupérée",
+            data: result,
+          });
         })
         .catch((error) => {
           res.status(500).json({
@@ -73,18 +79,18 @@ booksRouter.get("/", (req, res) => {
 /**
  * @swagger
  * /api/books/{id}:
- * get:
- * summary: Récupère un ouvrage par ID.
- * parameters:
- * - name: id
- * in: path
- * required: true
- * description: ID de l'ouvrage à récupérer
- * responses:
- * 200:
- * description: Ouvrage récupéré avec succès.
- * 404:
- * description: Ouvrage introuvable.
+ *   get:
+ *     summary: Récupère un ouvrage par ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID de l'ouvrage à récupérer
+ *     responses:
+ *       200:
+ *         description: Ouvrage récupéré avec succès.
+ *       404:
+ *         description: Ouvrage introuvable.
  */
 booksRouter.get("/:id", auth, (req, res) => {
   const ouvragesId = req.params.id;
@@ -93,7 +99,7 @@ booksRouter.get("/:id", auth, (req, res) => {
       Categorie.findByPk(ouvrage.categorie_fk).then((cat) => {
         Ecrivain.findByPk(ouvrage.ecrivain_fk).then((ecri) => {
           res.status(200).json({
-            ...ouvrage.toJSON(),
+            ouvrage: ouvrage,
             categories: cat ? cat.nom : null,
             écrivain: ecri ? ecri.prenom + " " + ecri.nom : null,
           });
@@ -111,18 +117,18 @@ booksRouter.get("/:id", auth, (req, res) => {
 /**
  * @swagger
  * /api/books/{id}/evaluations:
- * get:
- * summary: Récupère les évaluations d'un ouvrage par ID.
- * parameters:
- * - name: id
- * in: path
- * required: true
- * description: ID de l'ouvrage pour lequel récupérer les évaluations.
- * responses:
- * 200:
- * description: Évaluations récupérées avec succès.
- * 404:
- * description: Ouvrage ou évaluations introuvables.
+ *   get:
+ *     summary: Récupère les évaluations d'un ouvrage par ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID de l'ouvrage pour lequel récupérer les évaluations.
+ *     responses:
+ *       200:
+ *         description: Évaluations récupérées avec succès.
+ *       404:
+ *         description: Ouvrage ou évaluations introuvables.
  */
 booksRouter.get("/:id/evaluations", auth, (req, res) => {
   const ouvragesId = req.params.id;

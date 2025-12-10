@@ -35,12 +35,15 @@ const Categorie = CategorieModel(sequelize, DataTypes);
 const Ecrivain = EcrivainModel(sequelize, DataTypes);
 const Evaluer = EvaluationModel(sequelize, DataTypes);
 let initDb = () => {
-  return sequelize.sync({ force: true }).then((_) => {
-    importOuvrages();
-    importUser();
-    importCategorie();
-    importEcrivain();
-    importEvaluer();
+  const isProduction = process.env.NODE_ENV === "production";
+  return sequelize.sync({ force: !isProduction }).then((_) => {
+    if (!isProduction) {
+      importOuvrages();
+      importUser();
+      importCategorie();
+      importEcrivain();
+      importEvaluer();
+    }
     console.log(
       "La base de données db_gestionnaireLivre a bien été synchronisée"
     );
