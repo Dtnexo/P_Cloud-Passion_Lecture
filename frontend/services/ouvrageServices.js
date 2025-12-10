@@ -3,7 +3,7 @@ import axios from 'axios'
 let token = localStorage.getItem('token') || null
 
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.VITE_DB_URL + '/api',
   withCredentials: false,
   headers: {
     Accept: 'application/json',
