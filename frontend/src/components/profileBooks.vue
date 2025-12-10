@@ -11,7 +11,9 @@ const props = defineProps({
 const bookUser = ref([])
 
 onMounted(() => {
+  console.log(props.userId)
   ouvrageServices.getBookUserById(props.userId).then((data) => {
+    console.log(data)
     bookUser.value = data.data.data
   })
 })

@@ -96,7 +96,7 @@ app.listen(port, () => {
     );
 });
 app.get("*", (req, res) => {
-  if (req.path.startsWith("/api")) {
+  if (req.path.startsWith("/api/")) {
     return res.status(404).json({ message: "Ressource API introuvable" });
   }
   res.sendFile(path.join(__dirname, "public", "index.html"));

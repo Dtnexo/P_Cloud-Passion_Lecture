@@ -36,6 +36,6 @@ watch(
 </script>
 
 <template>
-  <detail :book="book" ref="detailRef" />
+  <detail v-if="book && book.ouvrage" :book="book" ref="detailRef" />
   <comments @comments-updated="refreshNotes" />
 </template>
