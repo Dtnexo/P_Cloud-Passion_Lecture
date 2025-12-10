@@ -74,7 +74,7 @@ onMounted(() => {
   display: inline-block;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .profile-header {
     flex-direction: column;
     align-items: flex-start;

@@ -110,4 +110,24 @@ img {
 .nouveauté {
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  .books {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+
+  .hero-image {
+    max-width: 100%;
+  }
+}
 </style>

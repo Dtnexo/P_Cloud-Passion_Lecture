@@ -47,6 +47,20 @@ const link = computed(() => `/ouvrages/${props.book.ouvrage.ouvrage_id}`)
     box-shadow 0.3s ease;
 }
 
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+    padding-bottom: 15px;
+  }
+
+  img {
+    height: auto;
+    max-height: 300px;
+  }
+}
+
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);

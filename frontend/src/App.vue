@@ -362,4 +362,34 @@ header {
     display: none;
   }
 }
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px;
+  }
+
+  img {
+    align-self: center;
+    margin-bottom: 10px;
+  }
+
+  nav {
+    margin-left: 0;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .login-link {
+    margin-right: 0;
+    margin-top: 10px;
+  }
+
+  .navigation {
+    font-size: 18px;
+    padding: 8px 12px;
+  }
+}
 </style>

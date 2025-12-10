@@ -447,7 +447,8 @@ input[type='date']:focus,
 }
 
 .uploadImage {
-  width: 470px;
+  width: 100%;
+  max-width: 470px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -674,6 +675,26 @@ input[type='date']:focus,
 
   .extrait-link {
     align-self: center;
+  }
+
+  .title {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .title_author {
+    width: 100%;
+  }
+
+  .custom-select {
+    margin-left: 0;
+    margin-top: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .custom-select .selected {
+    width: 100%;
   }
 }
 </style>

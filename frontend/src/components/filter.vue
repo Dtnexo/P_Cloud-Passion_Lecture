@@ -181,4 +181,31 @@ const clickFilter = () => {
 .filters button:hover {
   background-color: #327ab0;
 }
+
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    width: 90%;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .custom-select,
+  .filters input[type='text'],
+  .filters button {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 18px;
+    height: 44px;
+  }
+
+  .custom-select {
+    display: flex;
+    align-items: center;
+  }
+
+  .selected {
+    width: 100%;
+  }
+}
 </style>

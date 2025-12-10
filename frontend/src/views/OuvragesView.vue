@@ -168,4 +168,15 @@ const seeAll = () => {
   grid-template-rows: repeat(auto);
   gap: 20px;
 }
+
+@media (max-width: 768px) {
+  .books {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+
+  .books-container {
+    padding-bottom: 80px; /* Space for fixed add button */
+  }
+}
 </style>

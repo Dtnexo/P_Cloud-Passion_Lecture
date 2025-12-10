@@ -78,7 +78,8 @@ const handleRegister = async () => {
 
 <style scoped>
 form {
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   margin: 60px auto;
   padding: 32px 28px 28px 28px;
   background: #f7fbfc;
