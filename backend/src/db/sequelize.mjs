@@ -37,13 +37,20 @@ const Evaluer = EvaluationModel(sequelize, DataTypes);
 let initDb = () => {
   const isProduction = process.env.NODE_ENV === "production";
   return sequelize.sync({ force: !isProduction }).then((_) => {
-    if (!isProduction) {
-      importOuvrages();
-      importUser();
-      importCategorie();
-      importEcrivain();
-      importEvaluer();
-    }
+    User.count().then((count) => {
+      if (count === 0) {
+        importOuvrages();
+        importUser();
+        importCategorie();
+        importEcrivain();
+        importEvaluer();
+        console.log("Les données initiales ont été importées.");
+      } else {
+        console.log(
+          "La base de données contient déjà des données, aucun import nécessaire."
+        );
+      }
+    });
     console.log(
       "La base de données db_gestionnaireLivre a bien été synchronisée"
     );
