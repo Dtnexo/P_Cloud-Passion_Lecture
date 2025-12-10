@@ -10,12 +10,12 @@ const booksRouter = express();
 /**
  * @swagger
  * /api/books:
- *   get:
- *     summary: Récupérer tous les ouvrages
- *     description: Retourne la liste des ouvrages avec des filtres optionnels (titre, nom_editeur).
- *     responses:
- *       200:
- *         description: Liste des ouvrages.
+ * get:
+ * summary: Récupérer tous les ouvrages
+ * description: Retourne la liste des ouvrages avec des filtres optionnels (titre, nom_editeur).
+ * responses:
+ * 200:
+ * description: Liste des ouvrages.
  */
 
 booksRouter.get("/", (req, res) => {
@@ -38,27 +38,27 @@ booksRouter.get("/", (req, res) => {
   if (req.query.nom_editeur) {
     whereClause.nom_editeur = { [Op.like]: `%${req.query.nom_editeur}%` };
   }
-  Ouvrage.findAll({ where: whereClause }).then((ouvrages) => {
+  Ouvrage.findAll({
+    where: whereClause,
+    order: [["createdAt", "DESC"]],
+  }).then((ouvrages) => {
     if (ouvrages.length === 0) {
-      res.status(404).json({ error: "Aucun ouvrages n'a été trouvé" });
+      res.json([]);
     } else {
       const books = Promise.all(
         ouvrages.map(async (ouvrage) => {
           const cat = await Categorie.findByPk(ouvrage.categorie_fk);
           const ecri = await Ecrivain.findByPk(ouvrage.ecrivain_fk);
           return {
-            ouvrage: ouvrage,
-            categorie: cat.nom,
-            écrivain: ecri.prenom + " " + ecri.nom,
+            ...ouvrage.toJSON(),
+            categorie: cat ? cat.nom : null,
+            écrivain: ecri ? ecri.prenom + " " + ecri.nom : null,
           };
         })
       );
       books
         .then((result) => {
-          res.status(200).json({
-            message: "La liste des ouvrages a été trouvée",
-            data: result,
-          });
+          res.status(200).json(result);
         })
         .catch((error) => {
           res.status(500).json({
@@ -73,18 +73,18 @@ booksRouter.get("/", (req, res) => {
 /**
  * @swagger
  * /api/books/{id}:
- *   get:
- *     summary: Récupère un ouvrage par ID.
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: ID de l'ouvrage à récupérer
- *     responses:
- *       200:
- *         description: Ouvrage récupéré avec succès.
- *       404:
- *         description: Ouvrage introuvable.
+ * get:
+ * summary: Récupère un ouvrage par ID.
+ * parameters:
+ * - name: id
+ * in: path
+ * required: true
+ * description: ID de l'ouvrage à récupérer
+ * responses:
+ * 200:
+ * description: Ouvrage récupéré avec succès.
+ * 404:
+ * description: Ouvrage introuvable.
  */
 booksRouter.get("/:id", auth, (req, res) => {
   const ouvragesId = req.params.id;
@@ -93,9 +93,9 @@ booksRouter.get("/:id", auth, (req, res) => {
       Categorie.findByPk(ouvrage.categorie_fk).then((cat) => {
         Ecrivain.findByPk(ouvrage.ecrivain_fk).then((ecri) => {
           res.status(200).json({
-            ouvrage: ouvrage,
-            categories: cat.nom,
-            écrivain: ecri.prenom + " " + ecri.nom,
+            ...ouvrage.toJSON(),
+            categories: cat ? cat.nom : null,
+            écrivain: ecri ? ecri.prenom + " " + ecri.nom : null,
           });
         });
       })
@@ -111,18 +111,18 @@ booksRouter.get("/:id", auth, (req, res) => {
 /**
  * @swagger
  * /api/books/{id}/evaluations:
- *   get:
- *     summary: Récupère les évaluations d'un ouvrage par ID.
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: ID de l'ouvrage pour lequel récupérer les évaluations.
- *     responses:
- *       200:
- *         description: Évaluations récupérées avec succès.
- *       404:
- *         description: Ouvrage ou évaluations introuvables.
+ * get:
+ * summary: Récupère les évaluations d'un ouvrage par ID.
+ * parameters:
+ * - name: id
+ * in: path
+ * required: true
+ * description: ID de l'ouvrage pour lequel récupérer les évaluations.
+ * responses:
+ * 200:
+ * description: Évaluations récupérées avec succès.
+ * 404:
+ * description: Ouvrage ou évaluations introuvables.
  */
 booksRouter.get("/:id/evaluations", auth, (req, res) => {
   const ouvragesId = req.params.id;
@@ -157,9 +157,7 @@ booksRouter.post("/:id/evaluations", auth, (req, res) => {
       note: req.body.note,
     })
       .then((createComments) => {
-        // Définir un message pour le consommateur de l'API REST
         const message = `Le commentaire a bien été créé !`;
-        // Retourner la réponse HTTP en json avec le msg et le produit créé
         res.status(200).json({ message: message, data: createComments });
       })
       .catch((error) => {
@@ -188,9 +186,7 @@ booksRouter.post("/", auth, (req, res) => {
       ecrivain_fk: req.body.ecrivain_fk,
     })
       .then((createdOuvrage) => {
-        // Définir un message pour le consommateur de l'API REST
         const message = `Le produit ${createdOuvrage.titre} a bien été créé !`;
-        // Retourner la réponse HTTP en json avec le msg et le produit créé
         res.status(200).json({ message: message, data: createdOuvrage });
       })
       .catch((error) => {
@@ -209,12 +205,9 @@ booksRouter.put("/:id", auth, (req, res) => {
         if (updatedOuvrage === null) {
           const message =
             "Le produit demandé n'existe pas. Merci de réessayer avec un autre identifiant.";
-          // A noter ici le return pour interrompre l'exécution du code
           return res.status(404).json({ message });
         }
-        // Définir un message pour l'utilisateur de l'API REST
         const message = `Le produit ${updatedOuvrage.titre} dont l'id vaut ${updatedOuvrage.ouvrage_id} a été mis à jour avec succès`;
-        // Retourner la réponse HTTP en json avec le msg et le produit créé
         res.status(200).json({ message: message, data: updatedOuvrage });
       });
     })
@@ -237,14 +230,14 @@ booksRouter.delete("/:id", auth, (req, res) => {
         where: { ouvrage_id: deletedOuvrage.ouvrage_id },
       }).then((_) => {
         const message = `L'ouvrage ${deletedOuvrage.titre} a bien été supprimé !`;
-        res.status(200).json({ message: message, data: deletedOuvrage }); // Retourne un message de succès avec le produit supprimé
+        res.status(200).json({ message: message, data: deletedOuvrage });
       });
     })
 
     .catch((error) => {
       const message =
         "L'ouvrage n'a pas pu être supprimé. Merci de réessayer dans quelques instants.";
-      res.status(500).json({ message, data: error }); // Gestion des erreurs en cas de problème lors de la suppression
+      res.status(500).json({ message, data: error });
     });
 });
 
