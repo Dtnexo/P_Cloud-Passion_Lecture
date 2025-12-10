@@ -6,6 +6,7 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const DB_URL = import.meta.env.VITE_DB_URL
 const book = ref({})
 const books = reactive({ preview: null })
 const categories = ref([])
@@ -210,11 +211,7 @@ const clickFilter = () => {
       <img
         v-else
         class="uploadedImage"
-        :src="
-          book && book.image && typeof book.image === 'string'
-            ? `https://passion-lecture-backend.azurewebsites.net/api/${book.image}`
-            : ''
-        "
+        :src="book && book.image && typeof book.image === 'string' ? `${DB_URL}${book.image}` : ''"
         alt="Image actuelle"
       />
     </label>
