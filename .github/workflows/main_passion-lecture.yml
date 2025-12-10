@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  AZURE_WEBAPP_NAME: "passion-lecture" # App Service sur Azure
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
 
       - name: Build frontend (Vue.js)
         working-directory: frontend
-        run: npm run build
+        run: VITE_DB_URL="" npm run build
 
       - name: Install backend dependencies
         working-directory: backend
@@ -58,6 +61,6 @@ jobs:
       - name: Deploy unified app to Azure Web App (passion-lecture)
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "passion-lecture"
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C6256BBDEE4D409A8E28224DA1C573B2 }}
           package: backend/
