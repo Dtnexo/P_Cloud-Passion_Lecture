@@ -3,8 +3,8 @@ import bcrypt from "bcrypt";
 let users = [
   {
     id: 1,
-    pseudo: "Etml",
-    mdp: bcrypt.hashSync("Etml2025", 10),
+    pseudo: "AdminEtml2025",
+    mdp: bcrypt.hashSync("admin2025Etmlteisot@+", 10),
     date_entre: new Date("2022-06-15"),
     admin: true,
   },
