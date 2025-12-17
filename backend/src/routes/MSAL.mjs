@@ -50,9 +50,8 @@ function initMsal() {
 
 cca = initMsal();
 
-const redirectUri =
-  process.env.AZURE_REDIRECT_URI ||
-  "http://localhost:3000/api/msal/microsoft/redirect";
+const redirectUri = process.env.AZURE_REDIRECT_URI;
+console.log("MSAL: Using redirectUri:", redirectUri);
 
 msalRouter.get("/microsoft/login", (req, res) => {
   if (!cca) {
@@ -71,7 +70,6 @@ msalRouter.get("/microsoft/login", (req, res) => {
     });
   }
 
-  console.log("MSAL: Using redirectUri:", redirectUri);
   cca
     .getAuthCodeUrl({
       scopes: ["openid", "profile", "email"],
@@ -109,7 +107,7 @@ msalRouter.get("/microsoft/redirect", async (req, res) => {
       privateKey,
       { expiresIn: "24h" }
     );
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.FRONTEND_URL;
     console.log("MSAL: Login success for", user.pseudo, "ID:", user.id);
 
     const redirectTo = `${frontendUrl}/msal-callback?token=${token}`;
