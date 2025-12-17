@@ -17,7 +17,7 @@ const handleLogin = async () => {
   }
 }
 
-const DB_URL = import.meta.env.VITE_DB_URL || 'http://localhost:3000'
+const DB_URL = import.meta.env.BASE_URL
 
 const msLogin = () => {
   window.location.href = `${DB_URL}/api/msal/microsoft/login`
