@@ -107,9 +107,6 @@ const DB_URL = import.meta.env.VITE_DB_URL
 </script>
 
 <template>
-  <div v-if="useFlashMessageStore().type" :class="['flash-message', useFlashMessageStore().type]">
-    {{ useFlashMessageStore().message }}
-  </div>
   <div class="book-detail">
     <span v-if="moyenneNote !== null" class="moyenne-note"> ⭐ {{ moyenneNote }}/5 </span>
     <img
@@ -246,42 +243,220 @@ const DB_URL = import.meta.env.VITE_DB_URL
   opacity: 0.6;
   transition: all 0.2s;
 }
+</style>
 
-.flash-message {
-  position: fixed;
-  top: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  border-radius: 12px;
+<style scoped>
+.book-detail {
+  position: relative;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 60px;
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 60px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  box-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-main);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.moyenne-note {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  color: #1a202c;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 50px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  gap: 6px;
+  z-index: 10;
+}
+
+.cover {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  aspect-ratio: 2/3;
+}
+
+.cover:hover {
+  transform: scale(1.02);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Group */
+.header-group {
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 32px;
+}
+
+.caseCat {
+  margin-bottom: 16px; /* Pill above title */
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.title-row h2 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 3.5rem;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.authorCss {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.authorCss strong {
+  color: #334155;
+  font-weight: 600;
+}
+
+/* Meta Grid */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.meta-item {
+  background-color: #f8fafc;
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s;
+}
+
+.meta-item:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-2px);
+}
+
+.meta-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.meta-value {
   font-size: 1rem;
   font-weight: 600;
-  z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: #1e293b;
+}
+
+/* Resume */
+.resume-section {
+  margin-bottom: 40px;
+}
+
+.resume-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #1e293b;
+}
+
+.resume-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #475569;
+  margin: 0;
+}
+
+/* Actions */
+.actions-row {
+  margin-top: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
 }
 
-.flash-message.success {
-  background-color: #10b981;
+.extrait-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background-color: #0f172a; /* Dark button for high contrast */
   color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
 }
 
-.flash-message.error {
-  background-color: #ef4444;
-  color: white;
+.extrait-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.4);
+  background-color: #1e293b;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -20px);
+.editDelete {
+  display: flex;
+  gap: 12px;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .book-detail {
+    grid-template-columns: 1fr;
+    padding: 30px;
+    gap: 40px;
+    margin: 20px;
   }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
+
+  .header-group {
+    text-align: center;
+  }
+
+  .title-row h2 {
+    font-size: 2.5rem;
+  }
+
+  .meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .actions-row {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .extrait-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .editDelete {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>
