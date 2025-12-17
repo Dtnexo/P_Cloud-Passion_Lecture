@@ -2,6 +2,7 @@
 import { onMounted, ref, computed } from 'vue'
 import ouvrageServices from '../../services/ouvrageServices'
 import router from '@/router'
+import { useFlashMessageStore } from '@/stores/flashMessage'
 import Addcomment from './addComment.vue'
 import { useRoute } from 'vue-router'
 import confirmation from './confirmation.vue'
@@ -61,14 +62,18 @@ onMounted(async () => {
 })
 
 const confirm = ref(false)
+const flashMessageStore = useFlashMessageStore()
+
 const createComment = async (comment) => {
   try {
     confirm.value = false
     await ouvrageServices.createComment(route.params.id, comment)
     fetchCommts()
     emit('comments-updated')
+    flashMessageStore.setFlashMessage('success', 'Votre commentaire a été publié !')
   } catch (err) {
     console.error(err)
+    flashMessageStore.setFlashMessage('error', 'Erreur lors de la publication du commentaire.')
   }
 }
 
@@ -98,8 +103,10 @@ const deleteComment = async (id) => {
     await ouvrageServices.deleteComment(id)
     fetchCommts()
     emit('comments-updated')
+    flashMessageStore.setFlashMessage('success', 'Commentaire supprimé avec succès.')
   } catch (err) {
     console.error(err)
+    flashMessageStore.setFlashMessage('error', 'Erreur lors de la suppression du commentaire.')
   }
 }
 

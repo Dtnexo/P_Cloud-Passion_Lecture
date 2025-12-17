@@ -80,14 +80,6 @@ const clickFilter = () => {
     open.value = null
   }
 }
-const flashMessage = ref({ type: '', message: '' })
-
-const showFlashMessage = (type, message) => {
-  flashMessage.value = { type, message }
-  setTimeout(() => {
-    flashMessage.value = { type: '', message: '' }
-  }, 3000)
-}
 
 const uploadImage = async () => {
   if (!book.image) {
@@ -200,13 +192,6 @@ const checkValid = async () => {
 </script>
 <template>
   <div class="book-detail">
-    <!-- Flash Message -->
-    <div v-if="flashMessageStore.type" :class="['flash-message', flashMessageStore.type]">
-      <div class="flash-icon" v-if="flashMessageStore.type === 'success'">✓</div>
-      <div class="flash-icon" v-else>!</div>
-      {{ flashMessageStore.message }}
-    </div>
-
     <!-- Left Column: Cover Image -->
     <div class="left-column">
       <input type="file" id="fileInput" @change="handleFileUpload" accept="image/*" hidden />
@@ -621,58 +606,6 @@ textarea:focus {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
   background-color: #1e293b;
-}
-
-/* Flash Message */
-.flash-message {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px 16px;
-  border-radius: 50px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  animation: slideIn 0.3s ease;
-}
-
-.flash-message.success {
-  background: #ecfdf5;
-  color: #059669;
-  border: 1px solid #d1fae5;
-}
-
-.flash-message.error {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fee2e2;
-}
-
-.flash-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: currentColor;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (max-width: 900px) {

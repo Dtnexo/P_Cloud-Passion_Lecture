@@ -1,19 +1,18 @@
 <script setup>
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useFlashMessageStore } from '@/stores/flashMessage'
 import router from './router'
 
+const flashMessageStore = useFlashMessageStore()
 const showPopup = ref(false)
 
 const isLogged = computed(() => {
   const token = localStorage.getItem('token')
   if (!token) return false
   const jwt = token.split(' ')[1]
-  let userId
-  let admin
   try {
-    userId = JSON.parse(atob(jwt.split('.')[1])).userId
-    admin = JSON.parse(atob(jwt.split('.')[1])).admin
+    const payload = JSON.parse(atob(jwt.split('.')[1]))
     return true
   } catch (e) {
     return false
@@ -83,6 +82,13 @@ const logout = async () => {
       </div>
     </header>
 
+    <!-- Global Flash Message -->
+    <div v-if="flashMessageStore.type" :class="['global-flash-message', flashMessageStore.type]">
+      <div class="flash-icon" v-if="flashMessageStore.type === 'success'">✓</div>
+      <div class="flash-icon" v-else>!</div>
+      {{ flashMessageStore.message }}
+    </div>
+
     <div class="main-content">
       <RouterView />
     </div>
@@ -143,6 +149,61 @@ ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+/* Global Flash Message Styles */
+.global-flash-message {
+  position: fixed;
+  top: 100px; /* Below header */
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+}
+
+.global-flash-message.success {
+  background: rgba(236, 253, 245, 0.95);
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.global-flash-message.error {
+  background: rgba(254, 242, 242, 0.95);
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.flash-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: currentColor;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>
 
