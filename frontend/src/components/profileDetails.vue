@@ -5,12 +5,16 @@ import ouvrageServices from '../../services/ouvrageServices'
 const props = defineProps({
   userId: {
     required: true,
-    type: Int32Array,
+    type: [Number, String], // Fixed type definition
   },
 })
 
 function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('fr-CH', {
+  if (!dateStr) return 'Date inconnue'
+  const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return 'Date inconnue'
+
+  return date.toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -20,22 +24,26 @@ function formatDate(dateStr) {
 const user = ref({})
 
 onMounted(() => {
-  ouvrageServices
-    .getUserById(props.userId)
-    .then((data) => {
-      user.value = data.data.utilisateur
-    })
-    .catch((err) => {
-      console.error(err)
-    })
+  if (props.userId) {
+    ouvrageServices
+      .getUserById(props.userId)
+      .then((data) => {
+        user.value = data.data.utilisateur
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  }
 })
 </script>
 
 <template>
   <div class="profile-header">
-    <img class="profile-avatar" src="/images/user-interfaceBlack.png" alt="Avatar utilisateur" />
-    <div>
-      <h2>{{ user.pseudo }}</h2>
+    <div class="avatar-container">
+      <img class="profile-avatar" src="/images/user-interfaceBlack.png" alt="Avatar utilisateur" />
+    </div>
+    <div class="user-info">
+      <h2>{{ user.pseudo || 'Utilisateur' }}</h2>
       <p class="profile-date">Membre depuis le {{ formatDate(user.createdAt) }}</p>
     </div>
   </div>
@@ -45,49 +53,71 @@ onMounted(() => {
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 24px;
-  background: linear-gradient(135deg, #f5f7fa 70%, #e4ebf1 100%);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(69, 123, 157, 0.13);
-  padding: 28px 32px;
-  margin: 32px auto 24px auto;
-  max-width: 500px;
+  gap: 32px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  padding: 40px;
+  margin: 40px auto;
+  max-width: 800px;
+}
+
+.avatar-container {
+  position: relative;
+}
+
+.avatar-container::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e2e8f0 0%, white 100%);
+  z-index: -1;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .profile-header h2 {
-  margin: 0 0 8px 0;
-  color: #1d3557;
-  font-size: 1.6rem;
+  margin: 0;
+  color: #1e293b;
+  font-family: 'Georgia', serif;
+  font-size: 2.5rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: -0.5px;
 }
 
 .profile-date {
-  color: #457b9d;
-  font-size: 1.05rem;
+  color: #64748b;
+  font-size: 1rem;
   font-weight: 500;
   margin: 0;
-  letter-spacing: 0.2px;
-  background: #e7ecef;
-  padding: 5px 14px;
-  border-radius: 8px;
-  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
 }
 
 @media (max-width: 768px) {
   .profile-header {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 18px 10px;
-    gap: 14px;
-    max-width: 98vw;
-  }
-  .profile-avatar {
-    width: 60px;
-    height: 60px;
-  }
-  .profile-header h2 {
-    font-size: 1.15rem;
+    text-align: center;
+    padding: 30px;
+    gap: 20px;
   }
 }
 </style>

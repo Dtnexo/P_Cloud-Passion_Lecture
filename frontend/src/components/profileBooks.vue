@@ -35,64 +35,45 @@ onMounted(() => {
 <style scoped>
 .profile-section {
   margin: 40px auto;
-  background: linear-gradient(135deg, #f5f7fa 70%, #e4ebf1 100%);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(69, 123, 157, 0.13);
-  padding: 38px 28px;
   max-width: 1200px;
-  width: 95vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
+  width: 100%;
+  padding: 0 20px;
 }
 
 .profile-section h3 {
-  color: #1d3557;
-  margin-bottom: 32px;
+  color: #1e293b;
+  margin-bottom: 24px;
   font-size: 1.5rem;
-  text-align: center;
-  letter-spacing: 1px;
+  font-family: 'Georgia', serif;
   font-weight: 700;
-  background: #e7ecef;
-  padding: 8px 24px;
-  border-radius: 10px;
-  display: inline-block;
-  box-shadow: 0 2px 8px rgba(69, 123, 157, 0.08);
+  text-align: left;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 16px;
+  display: block;
 }
 
 .booksCard {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px;
   justify-content: center;
-  width: 100%;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(69, 123, 157, 0.1);
-  padding: 28px 40px;
-  margin-bottom: 36px;
-  transition:
-    box-shadow 0.22s,
-    transform 0.18s;
-  position: relative;
 }
 
-.booksCard:hover {
-  box-shadow: 0 10px 28px rgba(69, 123, 157, 0.18);
-  transform: translateY(-2px) scale(1.012);
+/* Override booksCard default margin */
+.booksCard > * {
+  margin: 0 !important;
 }
 
-@media (max-width: 1100px) {
-  .profile-section {
-    max-width: 98vw;
-    padding: 18px 4px;
-  }
+@media (max-width: 768px) {
   .booksCard {
-    flex-direction: column;
-    align-items: center;
-    padding: 16px 8px;
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .booksCard {
+    grid-template-columns: 1fr;
   }
 }
 </style>

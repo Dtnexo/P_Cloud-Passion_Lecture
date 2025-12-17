@@ -119,30 +119,67 @@ const DB_URL = import.meta.env.VITE_DB_URL
     />
 
     <div class="info">
-      <div class="title">
-        <div>
-          <h2>
-            {{ book.titre }}
-          </h2>
-          <p class="authorCss"><strong>Par</strong> {{ author }}</p>
+      <div class="header-group">
+        <span class="caseCat">{{ categorie }}</span>
+        <div class="title-row">
+          <h2>{{ book.titre }}</h2>
         </div>
-        <p class="caseCat">{{ categorie }}</p>
+        <p class="authorCss">
+          Par <strong>{{ author }}</strong>
+        </p>
       </div>
-      <p><strong>Résumé:</strong> {{ book.resume }}</p>
-      <p><strong>Nombre de pages:</strong> {{ book.nb_pages }}</p>
-      <p><strong>Année d'édition:</strong> {{ formattedDate }}</p>
-      <p><strong>Éditeur:</strong> {{ book.nom_editeur }}</p>
 
-      <p><strong>Ajouté par: </strong> {{ user.pseudo }}</p>
-      <a :href="`/pdfs/${book.extrait}`" target="_blank" class="extrait-link">Voir un extrait</a>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Pages</span>
+          <span class="meta-value">{{ book.nb_pages }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Publication</span>
+          <span class="meta-value">{{ formattedDate }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Éditeur</span>
+          <span class="meta-value">{{ book.nom_editeur }}</span>
+        </div>
+        <div class="meta-item" v-if="user && user.pseudo">
+          <span class="meta-label">Ajouté par</span>
+          <span class="meta-value">{{ user.pseudo }}</span>
+        </div>
+      </div>
 
-      <div v-if="canUpdate" class="editDelete">
-        <RouterLink :to="link" class="editOuvrage">
-          <img src="/images/editUpdate.png" alt="edit"
-        /></RouterLink>
-        <a class="deleteOuvrage"
-          ><img src="/images/trash-can.png" alt="delete" @click="showConfirmation"
-        /></a>
+      <div class="resume-section">
+        <h3>Résumé</h3>
+        <p class="resume-text">{{ book.resume }}</p>
+      </div>
+
+      <div class="actions-row">
+        <a :href="`/pdfs/${book.extrait}`" target="_blank" class="extrait-link">
+          <span>Lire un extrait</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </a>
+
+        <div v-if="canUpdate" class="editDelete">
+          <RouterLink :to="link" class="editOuvrage" title="Modifier">
+            <img src="/images/editUpdate.png" alt="edit" />
+          </RouterLink>
+          <button class="deleteOuvrage" @click="showConfirmation" title="Supprimer">
+            <img src="/images/trash-can.png" alt="delete" />
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -159,23 +196,21 @@ const DB_URL = import.meta.env.VITE_DB_URL
 .caseCat {
   display: inline-block;
   padding: 6px 14px;
-  background: linear-gradient(135deg, #1d72b8 0%, #4facfe 100%);
-  color: white;
-  font-size: 0.85rem;
+  background-color: var(--surface);
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  font-size: 0.8rem;
   font-weight: 600;
   border-radius: 50px;
-  box-shadow: 0 4px 10px rgba(29, 114, 184, 0.3);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: all 0.2s ease;
   cursor: default;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .caseCat:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(29, 114, 184, 0.4);
+  background-color: var(--secondary);
+  color: white;
 }
 
 .editOuvrage,
@@ -185,60 +220,57 @@ const DB_URL = import.meta.env.VITE_DB_URL
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  background-color: #f8f9fa;
-  margin-left: 10px;
+  border-radius: 50%;
+  background-color: #f8fafe;
+  margin-left: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid #e9ecef;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.editOuvrage:hover {
-  background-color: #e3f2fd;
-  border-color: #bbdefb;
-  transform: translateY(-2px);
-}
-
+.editOuvrage:hover,
 .deleteOuvrage:hover {
-  background-color: #ffebee;
-  border-color: #ffcdd2;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.deleteOuvrage:hover img {
+  filter: brightness(0.8) sepia(1) hue-rotate(-50deg) saturate(3);
 }
 
 .editOuvrage img,
 .deleteOuvrage img {
   width: 20px;
   height: 20px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.editOuvrage:hover img,
-.deleteOuvrage:hover img {
-  opacity: 1;
+  opacity: 0.6;
+  transition: all 0.2s;
 }
 
 .flash-message {
   position: fixed;
-  top: 90px;
+  top: 100px;
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 24px;
-  border-radius: 50px;
-  font-size: 0.95rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
   z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .flash-message.success {
-  background-color: #2ecc71;
+  background-color: #10b981;
   color: white;
 }
 
 .flash-message.error {
-  background-color: #e74c3c;
+  background-color: #ef4444;
   color: white;
 }
 
@@ -257,164 +289,215 @@ const DB_URL = import.meta.env.VITE_DB_URL
 <style scoped>
 .book-detail {
   position: relative;
-  display: flex;
-  flex-direction: row; /* Desktop default */
-  align-items: flex-start;
-  gap: 40px;
-  max-width: 1000px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 60px;
+  max-width: 1200px;
   margin: 60px auto;
-  padding: 40px; /* More breathing room */
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Softer, deeper shadow */
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  padding: 60px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  box-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-main);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .moyenne-note {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 24px;
+  left: 24px;
   display: inline-flex;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(5px);
-  color: #f1c40f;
+  backdrop-filter: blur(8px);
+  color: #1a202c;
   font-size: 1rem;
   font-weight: 700;
   padding: 8px 16px;
-  border-radius: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 50px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   gap: 6px;
-  z-index: 2;
-  transition: transform 0.2s ease;
-}
-
-.moyenne-note:hover {
-  transform: scale(1.05);
+  z-index: 10;
 }
 
 .cover {
-  width: 320px; /* Fixed width for consistency */
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   object-fit: cover;
-  flex-shrink: 0; /* Prevent squishing */
+  transition: transform 0.4s ease;
+  aspect-ratio: 2/3;
+}
+
+.cover:hover {
+  transform: scale(1.02);
 }
 
 .info {
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.title {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #f8f9fa;
-  padding-bottom: 15px;
+/* Header Group */
+.header-group {
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 32px;
 }
 
-.info h2 {
-  font-size: 2.2rem;
-  color: #1d3557;
-  margin: 0 0 5px 0;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
+.caseCat {
+  margin-bottom: 16px; /* Pill above title */
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.title-row h2 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 3.5rem;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
 .authorCss {
+  font-size: 1.25rem;
+  color: #64748b;
   margin: 0;
-  font-size: 1.1rem;
-  color: #6c757d;
-  font-weight: 500;
 }
 
-.info p {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: #495057;
-  margin-bottom: 12px;
-}
-
-.info p strong {
-  color: #212529;
+.authorCss strong {
+  color: #334155;
   font-weight: 600;
-  margin-right: 5px;
+}
+
+/* Meta Grid */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.meta-item {
+  background-color: #f8fafc;
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s;
+}
+
+.meta-item:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-2px);
+}
+
+.meta-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.meta-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Resume */
+.resume-section {
+  margin-bottom: 40px;
+}
+
+.resume-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #1e293b;
+}
+
+.resume-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #475569;
+  margin: 0;
+}
+
+/* Actions */
+.actions-row {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .extrait-link {
-  display: inline-block;
-  margin-top: 30px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #1d72b8 0%, #00509d 100%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background-color: #0f172a; /* Dark button for high contrast */
   color: white;
   text-decoration: none;
   font-weight: 600;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(29, 114, 184, 0.25);
-  align-self: flex-start; /* Keep left */
+  border-radius: 50px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
 }
 
 .extrait-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(29, 114, 184, 0.35);
-  background: linear-gradient(135deg, #155a96 0%, #003f7f 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.4);
+  background-color: #1e293b;
 }
 
 .editDelete {
-  margin-top: auto; /* Push to bottom if container has height, else just margin */
-  padding-top: 20px;
   display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid #f8f9fa;
+  gap: 12px;
 }
 
+/* Mobile */
 @media (max-width: 900px) {
   .book-detail {
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 20px;
+    grid-template-columns: 1fr;
+    padding: 30px;
+    gap: 40px;
     margin: 20px;
   }
 
-  .cover {
-    width: 100%;
-    max-width: 300px; /* Limit size on mobile */
+  .header-group {
+    text-align: center;
   }
 
-  .title {
+  .title-row h2 {
+    font-size: 2.5rem;
+  }
+
+  .meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .actions-row {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 15px;
-  }
-
-  .info {
-    width: 100%;
-    align-items: center; /* Center content column */
-    text-align: center;
-  }
-
-  .info h2 {
-    font-size: 1.8rem;
+    gap: 24px;
   }
 
   .extrait-link {
-    align-self: center;
+    width: 100%;
+    justify-content: center;
   }
 
   .editDelete {
-    justify-content: center;
     width: 100%;
-    margin-top: 30px;
+    justify-content: center;
   }
 }
 </style>

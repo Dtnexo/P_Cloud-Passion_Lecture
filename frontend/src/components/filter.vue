@@ -90,122 +90,166 @@ const clickFilter = () => {
 </template>
 <style scoped>
 .filters {
-  width: 98%;
-  background-color: #6096ba;
-  padding: 5px;
-  border-radius: 12px;
+  width: 100%; /* Better fit */
+  max-width: 1200px;
+  background-color: var(--surface);
+  padding: 12px 24px;
+  border-radius: 16px; /* Smooth corners */
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap; /* Allow wrapping on medium screens */
+  gap: 16px;
   align-items: center;
-  justify-content: center;
-  margin: 10px auto;
+  justify-content: space-between;
+  margin: 0 auto 40px; /* More bottom spacing */
   position: sticky;
-  top: 10px;
-  z-index: 20;
+  top: 80px; /* Below fixed header */
+  z-index: 900;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Common select/input styling wrapper */
+.custom-select,
+.filters input[type='text'],
+.filters button {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-main);
 }
 
 .custom-select {
   position: relative;
-  font-size: 24px;
-  color: white;
-  background-color: #a3cef1;
-  padding: 0px 20px;
-  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+  background-color: #f8fafe; /* Light background for fields */
+  padding: 0;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
+  border: 1px solid transparent; /* Prepare for hover */
+  transition: all 0.2s ease;
+  min-width: 180px;
+}
+
+.custom-select:hover {
+  background-color: #e2e8f0;
 }
 
 .custom-select .selected {
-  height: 34px;
-  padding-right: 50px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+  width: 100%;
+  height: 100%;
+  padding: 0 40px 0 16px;
+  display: flex;
+  align-items: center;
+  /* SVG chevron icon */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%2364748b' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0px center;
-  background-size: 30px 30px;
+  background-position: right 12px center;
+  background-size: 20px;
 }
 
 .custom-select .options {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 8px);
   left: 0;
-  right: 0;
-  background-color: #a3cef1;
+  min-width: 200px;
+  background-color: var(--surface);
   border-radius: 12px;
-  margin-top: 5px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   z-index: 10;
   overflow: hidden;
-  padding: 0;
+  padding: 8px 0;
   list-style: none;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .custom-select .options li {
-  padding: 10px 20px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  color: var(--text-main);
   cursor: pointer;
-  color: white;
-  transition: background 0.2s;
+  transition: background 0.1s;
 }
 
 .custom-select .options li:hover {
-  background-color: #6096ba;
+  background-color: #f1f5f9;
+  color: var(--secondary);
 }
 
 .filters input[type='text'] {
-  padding: 3px 20px 3px 55px;
-  border-radius: 999px;
-  border: none;
-  background-color: #a3cef1;
-  color: white;
-  font-size: 24px;
-  background-image:
-    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="gray" width="24" height="24" viewBox="0 0 24 24"><path d="M21.53 20.47l-5.1-5.1A7.94 7.94 0 0018 10a8 8 0 10-8 8 7.94 7.94 0 005.37-1.57l5.1 5.1a.75.75 0 101.06-1.06zM4 10a6 6 0 1112 0 6 6 0 01-12 0z"/></svg>'),
-    linear-gradient(to right, gray 2px, transparent 2px);
+  flex-grow: 1; /* Take remaining space */
+  padding: 0 20px 0 48px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background-color: #f8fafe;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2394a3b8' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='M21.53 20.47l-5.1-5.1A7.94 7.94 0 0018 10a8 8 0 10-8 8 7.94 7.94 0 005.37-1.57l5.1 5.1a.75.75 0 101.06-1.06zM4 10a6 6 0 1112 0 6 6 0 01-12 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position:
-    12px center,
-    40px center;
-  background-size:
-    24px 24px,
-    2px 70%;
+  background-position: 16px center;
+  transition: all 0.2s ease;
+}
+
+.filters input[type='text']:focus {
+  outline: none;
+  background-color: var(--surface);
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.1);
+}
+
+.filters input[type='text']::placeholder {
+  color: #94a3b8;
 }
 
 .filters button {
-  padding: 3px 20px;
-  border-radius: 999px;
-  font-size: 24px;
+  padding: 0 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
   background-color: transparent;
-  border: 1.5px solid white;
-  color: white;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
   cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .filters button:hover {
-  background-color: #327ab0;
+  border-color: var(--secondary);
+  color: var(--secondary);
+  background-color: #f0f9ff;
 }
 
 @media (max-width: 768px) {
   .filters {
     flex-direction: column;
-    width: 90%;
-    gap: 15px;
-    padding: 15px;
+    padding: 16px;
+    align-items: stretch; /* Full width children */
+    gap: 12px;
+    top: 60px; /* Adjust for mobile header path */
   }
 
   .custom-select,
   .filters input[type='text'],
   .filters button {
     width: 100%;
-    box-sizing: border-box;
-    font-size: 18px;
-    height: 44px;
-  }
-
-  .custom-select {
-    display: flex;
-    align-items: center;
-  }
-
-  .selected {
-    width: 100%;
+    min-width: 0;
   }
 }
 </style>

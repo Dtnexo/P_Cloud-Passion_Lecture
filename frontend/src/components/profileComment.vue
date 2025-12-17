@@ -78,17 +78,23 @@ const deleteComment = async (id) => {
 
 // Formatage de la date
 function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('fr-CH', {
-    year: 'numeric',
-    month: 'long',
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return ''
+
+  return date.toLocaleDateString('fr-FR', {
     day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   })
 }
 
 const bookComments = ref([])
 
 onMounted(() => {
-  fetchComments()
+  if (props.userId) {
+    fetchComments()
+  }
 })
 function goToBook(ouvrageId) {
   router.push(`/ouvrages/${ouvrageId}`)
@@ -99,30 +105,35 @@ const comment = true
 <template>
   <div class="profile-section">
     <h3 class="profile-title">
-      Commentaires postés ({{ bookComments.reduce((acc, bc) => acc + bc.comments.length, 0) }})
+      Commentaires postés
+      <span class="count"
+        >({{ bookComments.reduce((acc, bc) => acc + bc.comments.length, 0) }})</span
+      >
     </h3>
 
-    <div
-      class="booksCard"
-      v-for="bc in bookComments"
-      :key="bc.book.ouvrage_id"
-      @click="goToBook(bc.book.ouvrage_id)"
-    >
-      <img :src="`${DB_URL}${bc.book.image}`" alt="image de couverture" />
-      <div class="book-info">
-        <p class="book-title">{{ bc.book.titre }}</p>
-        <ul class="profile-list">
-          <li v-for="comment in bc.comments" :key="comment.evaluation_id">
-            <span class="comment-note">⭐ {{ comment.note }}/5</span>
-            <span class="comment-text">"{{ comment.commentaire }}"</span>
-            <span class="comment-date">({{ formatDate(comment.createdAt) }})</span>
-            <img
-              src="/images/trash-canRed.png"
-              alt="Supprimer le commentaire"
+    <div class="comments-grid">
+      <div class="comment-clean-card" v-for="bc in bookComments" :key="bc.book.ouvrage_id">
+        <div class="card-header" @click="goToBook(bc.book.ouvrage_id)">
+          <img :src="`${DB_URL}${bc.book.image}`" alt="Cover" class="mini-cover" />
+          <h4>{{ bc.book.titre }}</h4>
+        </div>
+
+        <div class="comments-list">
+          <div v-for="comment in bc.comments" :key="comment.evaluation_id" class="comment-item">
+            <div class="comment-top">
+              <span class="note">★ {{ comment.note }}/5</span>
+              <span class="date">{{ formatDate(comment.createdAt) }}</span>
+            </div>
+            <p class="comment-content">"{{ comment.commentaire }}"</p>
+            <button
+              class="delete-btn"
               @click.stop="showConfirmationDelete(comment.evaluation_id, comment.commentaire)"
-            />
-          </li>
-        </ul>
+              title="Supprimer"
+            >
+              <img src="/images/trash-canRed.png" alt="Supprimer" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -138,187 +149,146 @@ const comment = true
 
 <style scoped>
 .profile-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
   margin: 40px auto;
-  background: linear-gradient(135deg, #f5f7fa 70%, #e4ebf1 100%);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(69, 123, 157, 0.13);
-  padding: 38px 28px;
   max-width: 1200px;
-  width: 95vw;
+  width: 100%;
+  padding: 0 20px;
 }
 
-.profile-section h3 {
-  margin: 0 auto 32px auto;
+.profile-title {
+  color: #1e293b;
+  margin-bottom: 24px;
   font-size: 1.5rem;
-  text-align: center;
-  letter-spacing: 1px;
+  font-family: 'Georgia', serif;
   font-weight: 700;
-  background: #e7ecef;
-  padding: 8px 24px;
-  border-radius: 10px;
-  display: inline-block;
-  box-shadow: 0 2px 8px rgba(69, 123, 157, 0.08);
+  text-align: left;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 16px;
 }
 
-.booksCard {
-  display: flex;
-  align-items: flex-start;
-  gap: 40px;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(69, 123, 157, 0.1);
-  margin-bottom: 36px;
-  padding: 28px 40px;
+.count {
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: normal;
+  font-family: 'Inter', sans-serif;
+}
+
+.comments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 30px;
+}
+
+.comment-clean-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
   transition:
-    box-shadow 0.22s,
-    transform 0.18s;
-  position: relative;
-  width: 100%;
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
-.booksCard:hover {
-  box-shadow: 0 10px 28px rgba(69, 123, 157, 0.18);
-  transform: translateY(-2px) scale(1.012);
+.comment-clean-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.booksCard > img {
-  width: 120px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  background: #e7ecef;
-  box-shadow: 0 2px 8px rgba(69, 123, 157, 0.1);
-  border: 2px solid #e7ecef;
-  transition: border 0.2s;
-}
-
-.booksCard > img:hover {
-  border: 2px solid #457b9d;
-}
-
-.book-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.book-title {
-  font-weight: 700;
-  color: #1d3557;
-  margin: 0 0 10px 0;
-  font-size: 1.22rem;
-  letter-spacing: 0.5px;
-}
-
-.profile-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.profile-list li {
-  margin-bottom: 14px;
-  background: linear-gradient(90deg, #e7ecef 80%, #f5f7fa 100%);
-  border-radius: 7px;
-  padding: 14px 22px;
-  color: #222;
-  font-size: 1.08rem;
+.card-header {
   display: flex;
   align-items: center;
   gap: 16px;
-  position: relative;
-  box-shadow: 0 1px 4px rgba(69, 123, 157, 0.06);
-  transition: background 0.18s;
-  width: 100%;
-}
-
-.profile-list li:hover {
-  background: linear-gradient(90deg, #dbe9fa 80%, #e4ebf1 100%);
-}
-
-.comment-note {
-  font-size: 1.08rem;
-  color: #ff9800;
-  font-weight: 600;
-  margin-right: 8px;
-  letter-spacing: 0.5px;
-}
-
-.comment-text {
-  color: #457b9d;
-  font-style: italic;
-  margin-right: 12px;
-  font-size: 1.08rem;
-  flex: 1;
-  word-break: break-word;
-}
-
-.comment-date {
-  color: #888;
-  font-size: 0.97em;
-  margin-left: 4px;
-  min-width: 120px;
-  text-align: right;
-}
-
-.profile-list img {
-  width: 26px;
-  height: 26px;
-  margin-left: 18px;
+  padding: 16px;
+  background-color: #f8fafc;
   cursor: pointer;
-  transition:
-    filter 0.2s,
-    transform 0.2s,
-    background 0.2s;
-  filter: grayscale(0.3) brightness(0.95);
-  opacity: 0.7;
-  padding: 4px;
-  border-radius: 50%;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.profile-list img:hover {
-  filter: none;
+.mini-cover {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #334155;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comments-list {
+  padding: 16px;
+}
+
+.comment-item {
+  position: relative;
+  background: white;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.comment-item:last-child {
+  margin-bottom: 0;
+}
+
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.note {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.date {
+  color: #94a3b8;
+}
+
+.comment-content {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #475569;
+  font-style: italic;
+  line-height: 1.5;
+  padding-right: 24px;
+}
+
+.delete-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  padding: 0;
+}
+
+.delete-btn:hover {
   opacity: 1;
-  transform: scale(1.18) rotate(-12deg);
-  background: #ffeaea;
-  box-shadow: 0 2px 8px #ffbdbd55;
 }
 
-@media (max-width: 1100px) {
-  .profile-section {
-    max-width: 98vw;
-    padding: 18px 4px;
-  }
-  .booksCard {
-    flex-direction: column;
-    align-items: center;
-    padding: 16px 8px;
-    gap: 16px;
-  }
-  .booksCard > img {
-    width: 90px;
-    height: 130px;
-  }
-  .book-info {
-    align-items: center;
-    text-align: center;
-    width: 100%;
-  }
-  .profile-list li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    width: 100%;
-  }
-  .profile-list img {
-    margin-left: 0;
-    align-self: flex-end;
+.delete-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 600px) {
+  .comments-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

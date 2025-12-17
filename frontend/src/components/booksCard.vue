@@ -106,61 +106,59 @@ const link = computed(() => `/ouvrages/${props.book.ouvrage.ouvrage_id}`)
 }
 
 .card-content {
-  padding: 20px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  justify-content: space-between;
+  justify-content: flex-start; /* Align to top of content area */
+  align-items: center; /* Center horizontally */
+  text-align: center;
+  gap: 12px;
 }
 
 .titre {
   width: 100%;
-  margin-bottom: 8px;
+  margin: 0;
 }
 
 .titre p {
-  font-family: var(--font-main);
-  font-size: 1.15rem;
+  font-family: 'Georgia', 'Times New Roman', serif; /* Serif for a "classic book" feel */
+  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: #1a202c; /* Darker, more premium color (not blue) */
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
 }
 
 .card:hover .titre p {
-  color: var(--secondary);
+  color: var(--secondary); /* Color accent only on hover */
 }
 
 .meta-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
 }
 
 .ecrivain {
-  font-size: 0.95rem;
-  color: var(--text-light);
+  font-size: 0.75rem;
+  color: #718096;
   margin: 0;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px; /* Premium typographic touch */
+  opacity: 0.8;
 }
 
-.ecrivain::before {
-  content: '';
-  display: block;
-  width: 20px;
-  height: 1px;
-  background-color: var(--secondary);
-  opacity: 0.5;
-}
+/* Removed the dash ::before element for a cleaner centered look */
 
 @media (max-width: 768px) {
   .card-content {
@@ -168,7 +166,7 @@ const link = computed(() => `/ouvrages/${props.book.ouvrage.ouvrage_id}`)
   }
 
   .titre p {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 }
 </style>

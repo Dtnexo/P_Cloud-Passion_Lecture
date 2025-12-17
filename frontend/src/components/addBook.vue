@@ -6,7 +6,7 @@ import router from '@/router'
 
 const book = reactive({
   image: null,
-  preview: null, // <-- ajoute ceci
+  preview: null,
   titre: '',
   resume: '',
   nb_pages: '',
@@ -200,501 +200,488 @@ const checkValid = async () => {
 </script>
 <template>
   <div class="book-detail">
+    <!-- Flash Message -->
     <div v-if="flashMessageStore.type" :class="['flash-message', flashMessageStore.type]">
+      <div class="flash-icon" v-if="flashMessageStore.type === 'success'">✓</div>
+      <div class="flash-icon" v-else>!</div>
       {{ flashMessageStore.message }}
     </div>
-    <input type="file" id="fileInput" @change="handleFileUpload" accept="image/*" hidden />
-    <label
-      for="fileInput"
-      :class="['uploadImage', { noBorder: book.preview }, { uploadImageError: !champs.image }]"
-    >
-      <img v-if="book.preview" :src="book.preview" alt="Image sélectionnée" class="uploadedImage" />
-      <img
-        v-else
-        class="chooseImage"
-        src="../../public/images/ajouter-une-image.png"
-        alt="ajouter une image"
-      />
-    </label>
 
-    <div class="info">
-      <div class="title">
-        <div class="title_author">
-          <label for="titre">Titre du livre</label>
-          <input
-            id="titre"
-            type="text"
-            v-model="book.titre"
-            placeholder="Exemple : Les Misérables"
-            class="editable-input title-input"
-            :class="{ 'editable-inputError': !champs.titre }"
-          />
-          <div class="authors">
-            <div
-              class="author-select"
-              @click.stop="toggleSelect('author')"
-              :class="{ 'editable-inputError': !champs.author }"
-            >
-              <div class="selectedAuthor" :class="{ selectedAuthorerror: !champs.author }">
-                {{ selected.author.nom || 'Auteur' }}
-              </div>
-              <ul
-                class="optionsAuthor"
-                v-show="open === 'author'"
-                :class="{ optionsAuthorerror: !champs.author }"
-              >
-                <li
-                  v-for="author in authors"
-                  :key="author.id"
-                  @click.stop="selectOption('author', author)"
-                >
-                  {{ author.nom }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div
-          class="custom-select"
-          @click.stop="toggleSelect('categorie')"
-          :class="{ 'custom-error': !champs.categorie }"
-        >
-          <div id="categorie" class="selected" :class="{ selectedError: !champs.categorie }">
-            {{ selected.categorie.nom || 'Catégorie' }}
-          </div>
-          <ul
-            class="options"
-            v-show="open === 'categorie'"
-            :class="{ optionsError: !champs.categorie }"
-          >
-            <li
-              v-for="categorie in categories"
-              :key="categorie.id"
-              @click.stop="selectOption('categorie', categorie)"
-            >
-              {{ categorie.nom }}
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div>
-        <label for="resume">Résumé</label>
-        <textarea
-          id="resume"
-          v-model="book.resume"
-          placeholder="Exemple : Ce livre raconte l'histoire de..."
-          class="editable-textarea"
-          :class="{ 'editable-inputError': !champs.resume }"
-        ></textarea>
-      </div>
-      <div>
-        <label for="nb_pages">Nombre de pages</label>
-        <input
-          id="nb_pages"
-          type="number"
-          v-model="book.nb_pages"
-          placeholder="Exemple : 350"
-          class="editable-input"
-          :class="{ 'editable-inputError': !champs.nb_pages }"
+    <!-- Left Column: Cover Image -->
+    <div class="left-column">
+      <input type="file" id="fileInput" @change="handleFileUpload" accept="image/*" hidden />
+      <label
+        for="fileInput"
+        :class="['uploadImage', { noBorder: book.preview }, { uploadImageError: !champs.image }]"
+      >
+        <img
+          v-if="book.preview"
+          :src="book.preview"
+          alt="Image sélectionnée"
+          class="uploadedImage"
         />
-      </div>
-      <div>
-        <label for="formattedDate">Année d'édition</label>
+        <div v-else class="upload-placeholder">
+          <div class="icon-circle">
+            <img class="chooseImage" src="/images/ajouter-une-image.png" alt="upload" />
+          </div>
+          <span class="upload-text">Ajouter une couverture</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Right Column: Form -->
+    <div class="form-column">
+      <!-- Title -->
+      <div class="form-group full-width">
+        <label for="titre">Titre du livre</label>
         <input
-          id="formattedDate"
-          type="date"
-          v-model="book.annee_edition"
-          placeholder="Exemple : 1862"
-          class="editable-input"
-          :class="{ 'editable-inputError': !champs.annee_edition }"
-        />
-      </div>
-      <div>
-        <label for="nom_editeur">Éditeur</label>
-        <input
-          id="nom_editeur"
+          id="titre"
           type="text"
-          v-model="book.nom_editeur"
-          placeholder="Exemple : Gallimard"
-          class="editable-input"
-          :class="{ 'editable-inputError': !champs.nom_editeur }"
+          v-model="book.titre"
+          placeholder="Titre de l'œuvre"
+          class="editable-input title-input"
+          :class="{ 'editable-inputError': !champs.titre }"
         />
       </div>
-      <div>
-        <label for="extrait">Lien vers un extrait</label>
+
+      <!-- Row: Author & Category -->
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label>Auteur</label>
+          <div
+            class="author-select"
+            @click.stop="toggleSelect('author')"
+            :class="{ 'editable-inputError': !champs.author }"
+          >
+            <div class="selectedAuthor" :class="{ selectedAuthorerror: !champs.author }">
+              {{ selected.author.nom || 'Sélectionner un auteur' }}
+            </div>
+            <ul
+              class="optionsAuthor"
+              v-show="open === 'author'"
+              :class="{ optionsAuthorerror: !champs.author }"
+            >
+              <li
+                v-for="author in authors"
+                :key="author.id"
+                @click.stop="selectOption('author', author)"
+              >
+                {{ author.nom }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-group half-width">
+          <label>Catégorie</label>
+          <div
+            class="custom-select"
+            @click.stop="toggleSelect('categorie')"
+            :class="{ 'custom-error': !champs.categorie }"
+          >
+            <div id="categorie" class="selected" :class="{ selectedError: !champs.categorie }">
+              {{ selected.categorie.nom || 'Sélectionner une catégorie' }}
+            </div>
+            <ul
+              class="options"
+              v-show="open === 'categorie'"
+              :class="{ optionsError: !champs.categorie }"
+            >
+              <li
+                v-for="categorie in categories"
+                :key="categorie.id"
+                @click.stop="selectOption('categorie', categorie)"
+              >
+                {{ categorie.nom }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row: Pages, Year, Editor -->
+      <div class="form-row three-cols">
+        <div class="form-group">
+          <label for="nb_pages">Pages</label>
+          <input
+            id="nb_pages"
+            type="number"
+            v-model="book.nb_pages"
+            placeholder="350"
+            class="editable-input"
+            :class="{ 'editable-inputError': !champs.nb_pages }"
+          />
+        </div>
+        <div class="form-group">
+          <label for="formattedDate">Année</label>
+          <input
+            id="formattedDate"
+            type="date"
+            v-model="book.annee_edition"
+            class="editable-input"
+            :class="{ 'editable-inputError': !champs.annee_edition }"
+          />
+        </div>
+        <div class="form-group">
+          <label for="nom_editeur">Éditeur</label>
+          <input
+            id="nom_editeur"
+            type="text"
+            v-model="book.nom_editeur"
+            placeholder="Gallimard"
+            class="editable-input"
+            :class="{ 'editable-inputError': !champs.nom_editeur }"
+          />
+        </div>
+      </div>
+
+      <!-- Link -->
+      <div class="form-group full-width">
+        <label for="extrait">Lien extrait</label>
         <input
           id="extrait"
           type="text"
           v-model="book.extrait"
-          placeholder="Exemple : https://exemple.com/extrait.pdf"
+          placeholder="https://exemple.com/extrait.pdf"
           class="editable-input"
           :class="{ 'editable-inputError': !champs.extrait }"
         />
       </div>
-      <button class="valid" @click="checkValid">Soumettre</button>
+
+      <!-- Resume -->
+      <div class="form-group full-width grow-field">
+        <label for="resume">Résumé</label>
+        <textarea
+          id="resume"
+          v-model="book.resume"
+          placeholder="De quoi parle ce livre ?"
+          class="editable-textarea"
+          :class="{ 'editable-inputError': !champs.resume }"
+        ></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button class="valid" @click="checkValid">Publier le livre</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.uploadImageError {
-  border: 1px solid #f44336 !important;
-  color: #f44336 !important;
-  background-color: #ffe6e6 !important;
-}
-.editable-inputError {
-  border: 1px solid #f44336 !important;
-  color: #f44336 !important;
-  background-color: #ffe6e6 !important;
+/* Main Container - Compact Grid */
+.book-detail {
+  display: grid;
+  grid-template-columns: 280px 1fr; /* Image narrower */
+  gap: 40px;
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 40px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  align-items: stretch;
+  min-height: 500px; /* Minimal height constraint */
+  border: 1px solid #f1f5f9;
 }
 
-.editable-inputError::placeholder {
-  color: #f44336 !important;
-  opacity: 0.7 !important;
+/* Left Column - Image */
+.left-column {
+  display: flex;
+  flex-direction: column;
 }
-.authors {
+
+.uploadImage {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  cursor: pointer;
+  background-color: #f8fafc;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.title_author {
-  width: 532px;
+
+.uploadImage:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
 }
 
-@keyframes fade-in-out {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-  10%,
-  90% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #94a3b8;
 }
 
-input[type='date'],
-.editable-input {
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: all 0.4s ease;
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  background: #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
 }
 
-input[type='date']:focus,
-.editable-input:focus,
-.editable-textarea:focus {
-  outline: none;
-  border-color: #1d72b8;
-  box-shadow: 0 0 5px rgba(29, 114, 184, 0.5);
+.uploadImage:hover .icon-circle {
+  transform: scale(1.1);
+  background: #cbd5e1;
 }
 
-.editable-textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-  resize: vertical;
+.chooseImage {
+  width: 24px;
+  opacity: 0.6;
 }
 
-.title-input {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.valid {
-  align-self: flex-start;
-  margin-top: 20px;
-  padding: 10px 18px;
-  background-color: #1d72b8;
-  color: white;
-  font-weight: 500;
-  border-radius: 6px;
-  border: none;
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease;
-}
-
-.valid:hover {
-  background-color: #155a96;
-  transform: scale(1.05);
+.upload-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .uploadedImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+}
+
+.uploadImageError {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+/* Right Column - Compact Form */
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Tighter gap */
+}
+
+.form-group label {
   display: block;
-  transition: all 0.4s ease;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.uploadedImage:hover {
-  filter: brightness(0.6) saturate(1.3);
-}
-
-.uploadImage {
-  width: 100%;
-  max-width: 470px;
+.form-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border: solid 2px grey;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+  gap: 20px;
 }
 
-.noBorder {
-  border: none;
-}
-.uploadImage:hover {
-  background-color: rgba(128, 128, 128, 0.308);
+.half-width {
+  flex: 1;
 }
 
-.uploadImage .chooseImage {
-  width: 80px;
-  transition: transform 0.3s ease-in-out;
+.three-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
 }
 
-.uploadImage:hover .chooseImage {
-  transform: scale(1.1);
-}
-.author-select {
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  position: relative;
-  cursor: pointer;
-  user-select: none;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  font-style: italic;
-  color: #555;
-}
-
+/* Inputs */
+.editable-input,
+.editable-textarea,
+.author-select,
 .custom-select {
-  margin-left: 15px;
-  position: relative;
-  font-size: 24px;
-  color: white;
-  background-color: #1d72b8;
-  padding: 0 20px;
-  border-radius: 999px;
-  cursor: pointer;
-  user-select: none;
-  height: 43px;
+  width: 100%;
+  padding: 10px 14px; /* More compact padding */
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  color: #1e293b;
+  min-height: 42px; /* Fixed height for alignment */
   display: flex;
   align-items: center;
-  margin-top: 20px;
-  transition: all 0.4s ease;
 }
-.custom-error {
-  margin-left: 0px;
-  background-color: #ffe6e6 !important;
-  border: 1px solid #f44336 !important;
-  color: #f44336 !important;
+
+.title-input {
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 12px 14px;
 }
-.selectedAuthor {
-  width: 100%;
-  padding-right: 50px;
-  height: 100%; /* Pour hériter de la hauteur du parent */
+
+.editable-textarea {
+  min-height: 80px; /* Smaller default height */
+  resize: none; /* No resize to break layout */
+  align-items: flex-start;
+  font-family: inherit;
+}
+
+.grow-field {
+  flex-grow: 1;
   display: flex;
-  align-items: center; /* Centre verticalement le texte */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="grey" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 15px center; /* Centre verticalement la flèche */
-  background-size: 24px 24px;
+  flex-direction: column;
 }
 
-.selectedAuthorerror {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-color: #ffe6e6 !important;
-  color: #f44336 !important;
+.grow-field .editable-textarea {
+  flex-grow: 1;
+  height: 100%;
 }
-.optionsAuthorerror {
-  background-color: #ffe6e6 !important;
-  border: 1px solid #f44336 !important;
-  color: #f44336 !important;
+
+input:focus,
+textarea:focus {
+  outline: none;
+  background: white;
+  border-color: #94a3b8;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
 }
-.optionsAuthorerror li {
-  color: #f44336 !important;
+
+.editable-inputError {
+  border-color: #ef4444 !important;
+  background-color: #fff5f5 !important;
 }
-.optionsAuthorerror li:hover {
-  background-color: #ffa3a3 !important;
-  color: #f44336 !important;
-}
-.optionsAuthor {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border: 1px solid;
-  border-radius: 12px;
-  margin-top: 5px;
-  z-index: 10;
-  overflow: hidden;
-  padding: 0;
-  list-style: none;
-}
-.optionsAuthor li {
-  padding: 10px 20px;
+
+/* Custom Select Specifics */
+.author-select,
+.custom-select {
   cursor: pointer;
-  color: #555;
-  transition:
-    background-color 0.1s ease-in-out,
-    color 0.1s ease-in-out;
+  position: relative;
 }
 
-.optionsAuthor li:hover {
-  background-color: rgba(117, 109, 109, 0.404);
-  color: white;
-}
-
+.selectedAuthor,
 .selected {
   width: 100%;
-  padding-right: 50px;
-  height: 100%; /* Pour hériter de la hauteur du parent */
   display: flex;
-  align-items: center; /* Centre verticalement le texte */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 15px center; /* Centre verticalement la flèche */
-  background-size: 24px 24px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.selectedError {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-color: #ffe6e6 !important;
-  color: #f44336 !important;
+.selectedAuthor::after,
+.selected::after {
+  content: '▼';
+  font-size: 0.7rem;
+  color: #94a3b8;
 }
 
+/* Dropdown Options */
+.optionsAuthor,
 .options {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background-color: #1d72b8;
-  border-radius: 12px;
-  margin-top: 5px;
-  z-index: 10;
-  overflow: hidden;
-  padding: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  margin-top: 4px;
+  padding: 4px 0;
   list-style: none;
 }
 
-.optionsError {
-  background-color: #ffe6e6 !important;
-  border: 1px solid #f44336 !important;
-  color: #f44336 !important;
-}
-
-.optionsError li {
-  color: #f44336 !important;
-}
-
-.optionsError li:hover {
-  background-color: #ffa3a3 !important;
-  color: #f44336 !important;
-}
+.optionsAuthor li,
 .options li {
-  padding: 10px 20px;
+  padding: 8px 16px;
   cursor: pointer;
-  color: white;
-  transition: background 0.2s;
+  font-size: 0.9rem;
+  color: #475569;
 }
 
+.optionsAuthor li:hover,
 .options li:hover {
-  background-color: #1e5888;
-}
-.editable-input {
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+  background-color: #f1f5f9;
+  color: #0f172a;
 }
 
-.book-detail {
+/* Submit Button */
+.valid {
+  margin-top: auto;
+  padding: 14px 24px;
+  background-color: #0f172a;
+  color: white;
+  font-weight: 600;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-end;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.valid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+  background-color: #1e293b;
+}
+
+/* Flash Message */
+.flash-message {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  border-radius: 50px;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  animation: slideIn 0.3s ease;
+}
+
+.flash-message.success {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #d1fae5;
+}
+
+.flash-message.error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+}
+
+.flash-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: currentColor;
+  color: white;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 30px;
-  max-width: 1300px;
-  margin: 15px auto;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.7rem;
 }
 
-.info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 12px;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.title {
-  display: flex;
-  justify-content: space-between;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .book-detail {
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    grid-template-columns: 1fr;
+    height: auto;
   }
-
-  .info h2 {
-    text-align: center;
-  }
-
-  .extrait-link {
-    align-self: center;
-  }
-
-  .title {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .title_author {
-    width: 100%;
-  }
-
-  .custom-select {
-    margin-left: 0;
-    margin-top: 5px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .custom-select .selected {
-    width: 100%;
+  .left-column {
+    height: 300px;
   }
 }
 </style>

@@ -21,24 +21,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="hero">
-    <h1 class="hero-title">La lecture prend vie, partagez vos découvertes !</h1>
-    <img src="../../public/images/Image_accueil.png" alt="image d'accueil" class="hero-image" />
-    <div class="hero-description">
-      <h2>Bienvenue sur <span class="highlight">Lire & Partager</span> !</h2>
-      <p>
-        Découvrez un espace dédié aux amoureux des livres ! Sur Lire & Partager, vous pouvez
-        explorer de nouveaux ouvrages, partager vos lectures préférées et interagir avec d'autres
-        passionnés. Notre plateforme vous permet de découvrir, noter et commenter les livres que
-        vous aimez, tout en contribuant à une communauté active de lecteurs.
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        La lecture prend vie, <br />
+        <span class="text-gradient">partagez vos découvertes</span>
+      </h1>
+      <p class="hero-description">
+        Bienvenue sur <strong>Lire & Partager</strong>. Explorez de nouveaux univers, notez vos
+        coups de cœur et échangez avec une communauté de passionnés. Votre prochaine grande aventure
+        commence ici.
       </p>
+      <div class="hero-actions">
+        <RouterLink to="/ouvrages" class="btn-primary">Explorer les livres</RouterLink>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="image-wrapper">
+        <img src="/images/Image_accueil.png" alt="Bibliothèque accueillante" />
+      </div>
     </div>
   </section>
 
   <main>
-    <h2 class="nouveauté">Les dernières nouveautés</h2>
+    <div class="section-header">
+      <h2 class="section-title">Les dernières nouveautés</h2>
+      <p class="section-subtitle">Découvrez les ajouts les plus récents de la communauté</p>
+    </div>
+
     <section class="books-container">
-      <div class="books">
+      <div class="books-grid">
         <booksCard v-for="book in books" :key="book.id" :book="book" />
       </div>
     </section>
@@ -47,128 +59,164 @@ onMounted(() => {
 
 <style scoped>
 /* Hero Section */
-.hero {
-  text-align: center;
-  padding: 80px 20px;
-  background: linear-gradient(135deg, var(--background) 0%, #e2e8f0 100%);
-  border-radius: var(--radius);
-  margin-bottom: 50px;
-  position: relative;
-  overflow: hidden;
+.hero-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  padding: 60px 0 100px;
+  min-height: 80vh;
 }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(69, 123, 157, 0.05) 0%, transparent 70%);
-  z-index: 0;
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .hero-title {
-  font-size: 3rem;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 3.5rem;
   font-weight: 800;
-  margin-bottom: 20px;
+  line-height: 1.1;
   color: var(--primary);
-  line-height: 1.2;
-  position: relative;
-  z-index: 1;
+  margin: 0;
 }
 
-.hero-image {
-  max-width: 90%;
-  width: 600px;
-  height: auto;
-  border-radius: 20px;
-  margin: 30px 0;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  transform: rotate(-1deg);
-  transition: transform 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-image:hover {
-  transform: rotate(0deg) scale(1.02);
+.text-gradient {
+  background: linear-gradient(120deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .hero-description {
-  max-width: 700px;
-  margin: 0 auto;
   font-size: 1.15rem;
-  line-height: 1.8;
-  color: var(--text-main);
-  position: relative;
-  z-index: 1;
+  line-height: 1.7;
+  color: var(--text-light);
+  max-width: 90%;
 }
 
-.hero-description h2 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: var(--secondary);
-  font-weight: 700;
+.hero-actions {
+  margin-top: 10px;
 }
 
-.highlight {
-  color: var(--secondary);
-  font-weight: 800;
+.btn-primary {
+  display: inline-block;
+  background-color: var(--secondary);
+  color: white;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(69, 123, 157, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(69, 123, 157, 0.4);
+  background-color: #3b6b8c;
+}
+
+/* Hero Visual */
+.hero-visual {
   position: relative;
-  border-bottom: 3px solid rgba(69, 123, 157, 0.2);
+  display: flex;
+  justify-content: center;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+  transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+  transition: transform 0.5s ease;
+}
+
+.image-wrapper:hover {
+  transform: perspective(1000px) rotateY(0) rotateX(0);
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* Latest Books Section */
-.nouveauté {
+.section-header {
   text-align: center;
-  font-size: 2rem;
-  color: var(--primary);
-  margin: 60px 0 40px;
-  font-weight: 800;
-  position: relative;
-  display: inline-block;
-  width: 100%;
+  margin-bottom: 60px;
 }
 
-.nouveauté::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 4px;
-  background: var(--accent);
-  margin: 10px auto 0;
-  border-radius: 2px;
+.section-title {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin: 0 0 12px;
+}
+
+.section-subtitle {
+  color: var(--text-light);
+  font-size: 1.1rem;
 }
 
 .books-container {
-  width: 100%;
-  padding: 0 10px;
+  padding-bottom: 80px;
+  display: flex;
+  justify-content: center;
 }
 
-.books {
+.books-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  justify-items: center;
+  grid-template-columns: repeat(3, 1fr); /* Force 3 columns */
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px; /* Constrain width to keep cards nice */
+  margin: 0 auto;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .hero {
-    padding: 40px 15px;
+@media (max-width: 968px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 40px;
+    padding: 40px 0;
   }
 
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-image {
-    width: 100%;
+  .hero-content {
+    align-items: center;
   }
 
   .hero-description {
-    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .image-wrapper {
+    transform: none;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 850px) {
+  .books-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cols on tablet */
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 550px) {
+  .books-grid {
+    grid-template-columns: 1fr; /* 1 col on mobile */
   }
 }
 </style>

@@ -157,182 +157,220 @@ const comment = true
 </template>
 
 <style scoped>
-.commentsError {
-  font-size: 1.15rem;
-  color: #e53e3e;
-  background: #fff0f0;
-  border: 1.5px solid #e53e3e;
-  border-radius: 8px;
-  padding: 14px 22px;
-  margin: 32px auto 24px auto;
-  text-align: center;
-  max-width: 420px;
-  font-weight: 500;
-  box-shadow: 0 2px 12px rgba(229, 62, 62, 0.07);
-  letter-spacing: 0.2px;
-  transition:
-    background 0.2s,
-    border 0.2s,
-    color 0.2s,
-    transform 0.2s;
+.comments-section {
+  padding: 40px 20px;
+  background-color: transparent;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.commentsError:hover {
-  background: #ffeaea;
-  color: #b91c1c;
-  border-color: #b91c1c;
-  box-shadow: 0 4px 18px rgba(229, 62, 62, 0.13);
-  transform: scale(1.04);
-}
-.delete-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 0.5rem;
-  display: flex;
-  align-items: center;
-  transition: transform 0.15s;
-}
-.delete-btn:hover .delete-icon {
-  transform: scale(1.15);
-  filter: brightness(0.7);
-}
-.delete-icon {
-  width: 22px;
-  height: 22px;
-}
 .comments-header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center; /* centre horizontalement le contenu */
-  gap: 2rem;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
-  position: relative; /* pour positionner le bouton */
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding: 0 10px;
 }
+
+.title {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 2rem;
+  color: #1a202c;
+  margin: 0;
+  text-align: left;
+  flex: 0 1 auto;
+}
+
 .create {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, #1d72b8 0%, #2a9d8f 100%);
-  color: #fff;
-  border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: 24px;
+  position: static;
+  transform: none;
+  background-color: white;
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  padding: 10px 24px;
+  border-radius: 50px;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
-  transition:
-    background 0.2s,
-    transform 0.2s,
-    box-shadow 0.2s;
-  outline: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
   margin: 0;
 }
 
 .create:hover {
-  background: linear-gradient(90deg, #155a96 0%, #21867a 100%);
-  transform: translateY(-50%) scale(1.04);
-  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.15);
-}
-h1 {
-  text-align: center;
-}
-.comments-section {
-  padding: 2rem;
-  background-color: #f9f9f9;
+  background-color: var(--secondary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(69, 123, 157, 0.3);
 }
 
-.title {
-  font-size: 2rem;
-  color: #1d3557;
-  margin: 0;
-  padding: 0;
+.commentsError {
+  font-size: 1.1rem;
+  color: #64748b;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 30px;
+  margin: 20px auto;
   text-align: center;
-  flex: 0 1 auto;
   width: 100%;
+  font-weight: 500;
+}
+
+.commentsError:hover {
+  transform: none;
+  background: white;
+  color: #64748b;
+  border-color: #cbd5e1;
+  box-shadow: none;
 }
 
 .comments-list {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  gap: 1.5rem;
-  scrollbar-color: #1d72b8 #f9f9f9;
-  padding-bottom: 16px;
+  gap: 24px;
+  padding: 10px 4px 24px 4px; /* Space for shadow */
   width: 100%;
   box-sizing: border-box;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
+/* Scrollbar Styling */
 .comments-list::-webkit-scrollbar {
-  height: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
+  height: 8px;
+  background: transparent;
 }
+
+.comments-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
 .comments-list::-webkit-scrollbar-thumb {
-  background: #1d72b8;
-  border-radius: 8px;
+  background: #cbd5e1;
+  border-radius: 10px;
 }
+
 .comments-list::-webkit-scrollbar-thumb:hover {
-  background: #155a96;
+  background: #94a3b8;
 }
 
 .comment-card {
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1rem 1.25rem;
-  min-width: 320px;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  min-width: 300px;
   max-width: 350px;
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .comment-card:hover {
   transform: translateY(-4px);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .comment-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
 }
 
 .comment-user {
-  font-weight: bold;
-  color: #2a9d8f;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.05rem;
 }
 
 .comment-note {
-  font-size: 0.9rem;
-  color: #f4a261;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f59e0b;
+  background-color: #fffbeb;
+  padding: 4px 8px;
+  border-radius: 8px;
 }
 
 .comment-body {
-  font-size: 1rem;
-  color: #333;
-  line-height: 1.4;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+  flex-grow: 1; /* ensure consistant height */
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2;
+}
+
+.delete-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover .delete-icon {
+  opacity: 1;
+  transform: none;
+  filter: none;
 }
 
 @media (max-width: 700px) {
-  .comments-list {
-    flex-direction: column;
-    flex-wrap: wrap;
-    overflow-x: visible;
-    gap: 1.2rem;
-    padding-bottom: 0;
+  .comments-section {
+    padding: 20px;
   }
-  .comment-card {
-    min-width: unset;
-    max-width: 100%;
+
+  .comments-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 1.8rem;
+  }
+
+  .create {
     width: 100%;
+  }
+
+  .comments-list {
+    flex-direction: row; /* Keep scrolling on mobile, better than huge stack */
+    overflow-x: auto;
+    padding-bottom: 20px;
+  }
+
+  .comment-card {
+    min-width: 280px;
+    max-width: 280px;
   }
 }
 </style>
