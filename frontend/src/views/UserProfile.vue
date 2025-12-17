@@ -13,11 +13,12 @@ function getUserIdFromToken() {
   const jwt = token.split(' ').length > 1 ? token.split(' ')[1] : token
   try {
     const payload = JSON.parse(atob(jwt.split('.')[1]))
-    return payload.id || payload.userId // adapte selon ton backend
+    return payload.userId // adapte selon ton backend
   } catch (e) {
     return null
   }
 }
+console.log('User ID:', userId)
 
 onMounted(() => {
   // Ici tu pourrais charger les vraies données utilisateur

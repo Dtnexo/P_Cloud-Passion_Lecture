@@ -19,7 +19,6 @@ import {
   msalAuthMiddleware,
   bindOidcToSession,
   exposeAuthState,
-  requiresAuth,
 } from "./auth/MSAL.mjs";
 
 const corsOptions = {
@@ -89,7 +88,7 @@ import { booksRouter } from "./routes/books.mjs";
 app.use("/api/books", booksRouter);
 
 import { userRouter } from "./routes/users.mjs";
-app.use("/api/users", requiresAuth, userRouter);
+app.use("/api/users", auth, userRouter);
 
 import { msalRouter } from "./routes/MSAL.mjs";
 app.use("/api/msal", msalRouter);
@@ -101,7 +100,7 @@ import { authorsRouter } from "./routes/authors.mjs";
 app.use("/api/authors", authorsRouter);
 
 import { evaluerRouter } from "./routes/evaluer.mjs";
-app.use("/api/evaluations", requiresAuth, evaluerRouter);
+app.use("/api/evaluations", auth, evaluerRouter);
 
 import { swaggerSpec } from "./swagger.mjs";
 app.use(

@@ -5,7 +5,7 @@ import ouvrageServices from '../../services/ouvrageServices'
 const props = defineProps({
   userId: {
     required: true,
-    type: [Number, String], // Fixed type definition
+    type: Number,
   },
 })
 
@@ -24,16 +24,16 @@ function formatDate(dateStr) {
 const user = ref({})
 
 onMounted(() => {
-  if (props.userId) {
-    ouvrageServices
-      .getUserById(props.userId)
-      .then((data) => {
-        user.value = data.data.utilisateur
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }
+  console.log('User ID:', props.userId)
+  ouvrageServices
+    .getUserById(props.userId)
+    .then((data) => {
+      user.value = data.data.utilisateur
+      console.log('User data received:', user.value)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
 })
 </script>
 
@@ -44,7 +44,9 @@ onMounted(() => {
     </div>
     <div class="user-info">
       <h2>{{ user.pseudo || 'Utilisateur' }}</h2>
-      <p class="profile-date">Membre depuis le {{ formatDate(user.createdAt) }}</p>
+      <p class="profile-date">
+        Membre depuis le {{ formatDate(user.date_entre || user.createdAt) }}
+      </p>
     </div>
   </div>
 </template>

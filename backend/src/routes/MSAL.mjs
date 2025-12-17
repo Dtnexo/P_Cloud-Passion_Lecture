@@ -4,6 +4,7 @@ import { ConfidentialClientApplication } from "@azure/msal-node";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { privateKey } from "../auth/private_key.mjs";
+import { User } from "../db/sequelize.mjs";
 
 const msalRouter = express.Router();
 
@@ -89,18 +90,32 @@ msalRouter.get("/microsoft/redirect", async (req, res) => {
       redirectUri,
     });
     const account = response.account;
-    // Créer un JWT local pour votre API (facultatif)
+    const email = account.username || account.idTokenClaims?.email;
+    const name = account.name || email.split("@")[0];
+
+    // Find or Create user in local DB to get an Integer ID
+    const [user, created] = await User.findOrCreate({
+      where: { pseudo: name },
+      defaults: {
+        mdp: "MSAL_AUTH_LINKED_ACCOUNT",
+        admin: false,
+        date_entre: new Date(),
+      },
+    });
+
+    // Créer un JWT local pour votre API avec l'ID entier de la DB
     const token = jwt.sign(
-      { userId: account.homeAccountId, username: account.username },
+      { userId: user.id, username: user.pseudo, admin: user.admin },
       privateKey,
       { expiresIn: "24h" }
     );
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-    console.log("loris");
+    console.log("MSAL: Login success for", user.pseudo, "ID:", user.id);
 
     const redirectTo = `${frontendUrl}/msal-callback?token=${token}`;
     return res.redirect(redirectTo);
   } catch (err) {
+    console.error("MSAL Redirect Error:", err);
     return res.status(500).json({ error: err.message });
   }
 });
