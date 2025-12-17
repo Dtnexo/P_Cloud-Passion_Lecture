@@ -108,6 +108,7 @@ msalRouter.get("/microsoft/redirect", async (req, res) => {
       { expiresIn: "24h" }
     );
     const frontendUrl = process.env.FRONTEND_URL;
+    console.log("MSAL: Frontend URL:", frontendUrl);
     console.log("MSAL: Login success for", user.pseudo, "ID:", user.id);
 
     const redirectTo = `${frontendUrl}/msal-callback?token=${token}`;
