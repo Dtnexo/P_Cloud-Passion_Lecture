@@ -7,7 +7,7 @@ import confirmation from './confirmation.vue'
 
 const props = defineProps({
   book: {
-    type: Array,
+    type: Object,
     required: true,
   },
 })
@@ -149,6 +149,7 @@ const DB_URL = import.meta.env.VITE_DB_URL
   <confirmation
     v-show="confirm"
     :titre="book.titre"
+    :comment="false"
     @confirm="deleteBook"
     @cancel="hideConfirmation"
   />

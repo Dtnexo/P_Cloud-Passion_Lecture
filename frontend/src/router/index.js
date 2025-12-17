@@ -8,6 +8,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import ouvrageServices from '../../services/ouvrageServices'
 import UserProfile from '@/views/UserProfile.vue'
+import MsalCallbackView from '@/views/MsalCallbackView.vue'
 
 import AdminView from '@/views/AdminView.vue'
 
@@ -58,6 +59,11 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: UserProfile,
+    },
+    {
+      path: '/msal-callback',
+      name: 'msal-callback',
+      component: MsalCallbackView,
     },
   ],
 })

@@ -10,41 +10,73 @@ const msalRouter = express.Router();
 const useLocal = process.env.USE_LOCAL_AUTH === "true";
 
 let cca;
-if (!useLocal) {
-  const required = [
+
+function initMsal() {
+  const missing = [
     "AZURE_CLIENT_ID",
     "AZURE_TENANT_ID",
     "AZURE_CLIENT_SECRET",
-  ];
-  const missing = required.filter(
-    (k) => !process.env[k] || process.env[k].trim() === ""
-  );
-  if (missing.length) {
-    console.warn(
-      "Missing env vars for Azure MSAL, switching to local mock mode:",
+  ].filter((k) => !process.env[k]);
+
+  if (useLocal) {
+    console.log(
+      "MSAL: Explicitly running in local mock mode (USE_LOCAL_AUTH=true)"
+    );
+    return null;
+  }
+
+  if (missing.length > 0) {
+    console.error(
+      "MSAL: Missing environment variables for real Azure auth:",
       missing.join(", ")
     );
-    useLocal = true;
-  } else {
-    cca = new ConfidentialClientApplication({
+    return null;
+  }
+
+  try {
+    return new ConfidentialClientApplication({
       auth: {
         clientId: process.env.AZURE_CLIENT_ID,
         authority: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}`,
         clientSecret: process.env.AZURE_CLIENT_SECRET,
       },
     });
+  } catch (error) {
+    console.error("MSAL initialization failed:", error);
+    return null;
   }
-} else {
-  console.info("MSAL: running in local mock mode (USE_LOCAL_AUTH=true)");
 }
+
+cca = initMsal();
 
 const redirectUri =
   process.env.AZURE_REDIRECT_URI ||
-  "https://passion-lecture-backend.azurewebsites.net/api//api/msal/microsoft/redirect";
+  "http://localhost:3000/api/msal/microsoft/redirect";
 
 msalRouter.get("/microsoft/login", (req, res) => {
+  if (!cca) {
+    // Try one last time to init just in case env vars were lazy loaded
+    cca = initMsal();
+  }
+
+  if (!cca) {
+    const isMock = process.env.USE_LOCAL_AUTH === "true";
+    const statusMsg = isMock
+      ? "USE_LOCAL_AUTH is set to true."
+      : "Missing AZURE environment variables.";
+
+    return res.status(500).json({
+      error: `MSAL configuration invalid. ${statusMsg} Check server console/logs.`,
+    });
+  }
+
+  console.log("MSAL: Using redirectUri:", redirectUri);
   cca
-    .getAuthCodeUrl({ scopes: ["openid", "profile", "email"], redirectUri })
+    .getAuthCodeUrl({
+      scopes: ["openid", "profile", "email"],
+      redirectUri,
+      prompt: "select_account",
+    })
     .then((url) => res.redirect(url))
     .catch((err) => res.status(500).json({ error: err.message }));
 });
@@ -63,7 +95,8 @@ msalRouter.get("/microsoft/redirect", async (req, res) => {
       privateKey,
       { expiresIn: "24h" }
     );
-    const frontendUrl = process.env.FRONTEND_URL;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    console.log("loris");
 
     const redirectTo = `${frontendUrl}/msal-callback?token=${token}`;
     return res.redirect(redirectTo);

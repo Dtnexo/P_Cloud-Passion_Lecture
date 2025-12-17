@@ -93,6 +93,7 @@ onMounted(() => {
 function goToBook(ouvrageId) {
   router.push(`/ouvrages/${ouvrageId}`)
 }
+const comment = true
 </script>
 
 <template>

@@ -5,7 +5,7 @@ import booksCard from '@/components/booksCard.vue'
 const props = defineProps({
   userId: {
     required: true,
-    type: Int32Array,
+    type: [String, Number],
   },
 })
 const bookUser = ref([])
