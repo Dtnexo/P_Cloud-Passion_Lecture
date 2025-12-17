@@ -130,4 +130,38 @@ userRouter.get("/:id/evaluations", (req, res) => {
   });
 });
 
+userRouter.delete("/:id", (req, res) => {
+  const authorizationHeader = req.headers.authorization;
+  const token = authorizationHeader.split(" ")[1];
+  const decodedToken = jwt.verify(token, privateKey, (error, decodedToken) => {
+    if (error) {
+      return res.status(401).json({ message: "Token invalide" });
+    }
+    if (decodedToken.admin == true) {
+      User.findByPk(req.params.id)
+        .then((user) => {
+          if (user === null) {
+            return res.status(404).json({
+              message: "L'utilisateur n'existe pas",
+            });
+          }
+          return User.destroy({ where: { user_id: user.user_id } }).then(
+            (_) => {
+              const message = `L'utilisateur ${user.pseudo} a bien été supprimé`;
+              res.status(200).json({ message: message, data: user });
+            }
+          );
+        })
+        .catch((error) => {
+          res.status(500).json({
+            message: "Erreur lors de la suppression de l'utilisateur",
+            data: error,
+          });
+        });
+    } else {
+      return res.status(403).json("Tu n'es pas autorisé a venir ici");
+    }
+  });
+});
+
 export { userRouter };

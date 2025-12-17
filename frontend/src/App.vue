@@ -20,6 +20,18 @@ const isLogged = computed(() => {
   }
 })
 
+const isAdmin = computed(() => {
+  const token = localStorage.getItem('token')
+  if (!token) return false
+  try {
+    const jwt = token.split(' ')[1]
+    const admin = JSON.parse(atob(jwt.split('.')[1])).admin
+    return admin === true
+  } catch (e) {
+    return false
+  }
+})
+
 function togglePopup() {
   showPopup.value = !showPopup.value
 }
@@ -40,6 +52,7 @@ const logout = async () => {
   localStorage.removeItem('token')
   console.log('Déconnexion réussie')
   showPopup.value = false
+  router.push('/login')
 }
 </script>
 
@@ -53,6 +66,7 @@ const logout = async () => {
         <nav>
           <RouterLink class="navigation" to="/">Home</RouterLink>
           <RouterLink class="navigation" to="/ouvrages">Ouvrages</RouterLink>
+          <RouterLink v-if="isAdmin" class="navigation" to="/admin">Admin</RouterLink>
         </nav>
         <div class="login-link" @click.stop="togglePopup">
           <img class="login-img" src="/images/user-interfaceBlack.png" alt="login" />
@@ -91,78 +105,211 @@ const logout = async () => {
   </div>
 </template>
 
+<style>
+/* Global Variables & Reset */
+:root {
+  --primary: #1d3557;
+  --secondary: #457b9d;
+  --accent: #e63946;
+  --background: #f8fafe;
+  --surface: #ffffff;
+  --text-main: #2b2d42;
+  --text-light: #6c757d;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background-color: var(--background);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
 <style scoped>
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .main-content {
   flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  padding-top: 100px; /* Offset for fixed header */
 }
 
-.user-popup .logout {
-  font-size: 1.1rem;
-  font-family: inherit;
-  background: none;
-  border: none;
-  color: #c0392b;
-  font-weight: 500;
-  border-radius: 6px;
-  cursor: pointer;
-  transition:
-    color 0.2s,
-    background 0.2s;
-  padding: 4px 8px;
-  height: 36px;
+/* Navbar */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
-.user-popup .logout:hover {
-  background: #ffeaea;
-  color: #e74c3c;
-  text-decoration: none;
-}
-
-.login-link {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-left: 0;
-  margin-right: 20px;
+}
+
+.container img {
+  height: 40px;
+  width: auto;
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.navigation {
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.navigation:hover,
+.navigation.router-link-active {
+  color: var(--secondary);
+  background: rgba(69, 123, 157, 0.1);
+}
+
+/* User Menu */
+.login-link {
   position: relative;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.login-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.login-link:hover .login-img {
+  border-color: var(--secondary);
+  transform: scale(1.05);
 }
 
 .user-popup {
   position: absolute;
-  top: 48px;
+  top: 50px;
   right: 0;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 18px rgba(44, 62, 80, 0.13);
-  padding: 16px 24px;
-  width: 200px;
-  z-index: 100;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 10px;
+  width: 180px;
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 1.1rem;
-  color: #1d3557;
-  animation: fadeIn 0.18s;
+  gap: 5px;
+  animation: slideIn 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .user-popup a {
-  color: #1d3557;
-  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 8px;
   font-weight: 500;
-  transition: color 0.2s;
-  border-radius: 6px;
-  padding: 4px 8px;
+  color: var(--text-main);
 }
 
 .user-popup a:hover {
-  background: #e7ecef;
-  color: #457b9d;
+  background: var(--background);
+  color: var(--secondary);
 }
 
-@keyframes fadeIn {
+.user-popup .logout {
+  color: var(--accent);
+}
+
+.user-popup .logout:hover {
+  background: #fff5f5;
+  color: #c0392b;
+}
+
+/* Footer */
+.footer {
+  background: var(--surface);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 40px 0;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.footer-logo img {
+  height: 30px;
+  opacity: 0.8;
+}
+
+.footer-center {
+  text-align: center;
+}
+
+.footer-contact {
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.footer-credits {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-top: 5px;
+}
+
+/* Animations */
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
@@ -170,226 +317,39 @@ const logout = async () => {
   }
 }
 
-.login-img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  border-radius: 50%;
-  margin-left: 10px;
-  transition:
-    box-shadow 0.2s,
-    opacity 0.2s;
-  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
-  position: relative;
-  z-index: 1;
-}
-
-.login-link {
-  position: relative;
-}
-
-.login-link .login-img {
-  position: relative;
-  z-index: 2;
-}
-
-.login-link::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  background: url('/images/user-interfaceBlue.png') center/contain no-repeat;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  border-radius: 50%;
-  z-index: 3;
-}
-
-.login-link:hover .login-img {
-  opacity: 0;
-}
-
-.login-link:hover::after {
-  opacity: 1;
-}
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-img {
-  width: 100px;
-  align-self: flex-end;
-}
-
-.layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-#layout {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  margin-left: 20px;
-}
-
-.navigation {
-  font-size: 22px;
-  text-decoration: none;
-  color: #1d3557;
-  position: relative;
-  padding: 5px 18px;
-  border-radius: 8px 8px 0 0;
-  transition:
-    color 0.3s cubic-bezier(0.4, 2, 0.6, 1),
-    background 0.3s cubic-bezier(0.4, 2, 0.6, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 2, 0.6, 1),
-    transform 0.25s cubic-bezier(0.4, 2, 0.6, 1);
-  overflow: hidden;
-  z-index: 1;
-}
-
-.navigation:hover {
-  color: #fff;
-  background: linear-gradient(90deg, #457b9d 0%, #a8dadc 100%);
-  box-shadow: 0 8px 24px rgba(69, 123, 157, 0.18);
-  transform: scale(1.07);
-}
-
-.navigation::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%) scaleX(0);
-  width: 90%;
-  height: 4px;
-  background: linear-gradient(90deg, #457b9d 0%, #a8dadc 100%);
-  border-radius: 2px;
-  transition: transform 0.35s cubic-bezier(0.4, 2, 0.6, 1);
-  z-index: -1;
-}
-
-.navigation:hover::before {
-  transform: translateX(-50%) scaleX(1);
-}
-
-.navigation:hover::after {
-  width: 100%; /* La ligne s'étend sur toute la largeur au survol */
-}
-
-h2 {
-  font-size: 20px;
-}
-
-header {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background-color: #e7ecef;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.13);
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.footer {
-  background-color: #e7ecef;
-  color: #1d3557;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.13);
-  margin-top: 40px;
-  width: 100%;
-  padding: 0;
-}
-.footer-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  gap: 6px;
-}
-
-.footer-contact {
-  color: #1d3557;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1.1rem;
-  margin-bottom: 2px;
-  transition: color 0.2s;
-}
-
-.footer-contact:hover {
-  color: #457b9d;
-  text-decoration: underline;
-}
-
-.footer-credits {
-  text-align: center;
-  font-size: 1rem;
-  opacity: 0.85;
-  margin: 0;
-}
-
-.footer-empty {
-  width: 60px;
-}
-
-@media (max-width: 700px) {
-  .footer-container {
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
-    padding: 18px 8px;
-  }
-  .footer-center {
-    align-items: center;
-  }
-  .footer-empty {
-    display: none;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    gap: 16px;
-    padding: 10px;
+  .main-content {
+    padding-top: 80px;
   }
 
-  img {
-    align-self: center;
-    margin-bottom: 10px;
+  .container {
+    padding: 10px 15px;
   }
 
   nav {
-    margin-left: 0;
+    display: none; /* Mobile menu implementation usually requires state, assume handled or just hide for now based on snippet */
+  }
+
+  /* Simple mobile nav override if no burger menu logic exists in template */
+  nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    flex-wrap: wrap;
-    gap: 10px;
+    background: var(--surface);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 999;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
   }
 
-  .login-link {
-    margin-right: 0;
-    margin-top: 10px;
-  }
-
-  .navigation {
-    font-size: 18px;
-    padding: 8px 12px;
+  /* Reset footer layout for mobile */
+  .footer-container {
+    flex-direction: column;
+    gap: 20px;
   }
 }
 </style>

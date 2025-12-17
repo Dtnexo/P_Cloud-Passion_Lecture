@@ -102,29 +102,32 @@ const seeAll = () => {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 12px 24px;
+  border-radius: 8px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   z-index: 1000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   animation: fade-in-out 3s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .flash-message.success {
-  background-color: #4caf50;
+  background-color: #10b981;
   color: white;
 }
 
 .addBook {
   text-decoration: none;
-  right: 30px;
-  bottom: 30px;
-  font-size: 70px;
-  background-color: #6096ba;
+  right: 40px;
+  bottom: 40px;
+  font-size: 32px;
+  background-color: var(--secondary);
   color: white;
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,50 +136,72 @@ const seeAll = () => {
   cursor: pointer;
   position: fixed;
   transition:
-    box-shadow 0.3s ease-in-out,
-    transform 0.3s ease-in-out;
-}
-.addBook:hover {
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
-  transform: scale(1.15) translate(-5px, -5px);
-}
-.books-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-#errorMessage {
-  font-size: 1.2rem;
-  color: #e53e3e;
-  background: #ffeaea;
-  border: 1.5px solid #e53e3e;
-  border-radius: 8px;
-  padding: 16px 24px;
-  margin: 32px auto 24px auto;
-  text-align: center;
-  max-width: 500px;
-  box-shadow: 0 2px 12px rgba(229, 62, 62, 0.08);
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  transition:
-    background 0.2s,
-    border 0.2s;
-}
-.books {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(auto);
-  gap: 20px;
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 90;
 }
 
-@media (max-width: 768px) {
+.addBook:hover {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(1.1);
+  background-color: #3a698a;
+}
+
+.addBook:active {
+  transform: scale(0.95);
+}
+
+.books-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#errorMessage {
+  font-size: 1.1rem;
+  color: #c53030;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 40px auto;
+  text-align: center;
+  max-width: 500px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+}
+
+.books {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 32px;
+  width: 100%;
+  padding-bottom: 40px;
+}
+
+@media (max-width: 640px) {
   .books {
-    grid-template-columns: 1fr;
-    padding: 0 16px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
   }
 
   .books-container {
-    padding-bottom: 80px; /* Space for fixed add button */
+    padding: 16px;
+  }
+
+  .addBook {
+    width: 56px;
+    height: 56px;
+    right: 20px;
+    bottom: 20px;
+    font-size: 28px;
   }
 }
 </style>

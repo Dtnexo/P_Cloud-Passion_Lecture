@@ -70,6 +70,15 @@ export default {
   getUserComments(userId) {
     return apiClient.get(`/users/${userId}/evaluations`)
   },
+  getAllUsers() {
+    return apiClient.get('/users')
+  },
+  deleteUser(id) {
+    return apiClient.delete(`/users/${id}`)
+  },
+  getAllEvaluations() {
+    return apiClient.get('/evaluations')
+  },
   register(credentials) {
     return apiClient.post('/login/register', credentials)
   },

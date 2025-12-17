@@ -15,8 +15,6 @@ loginRouter.post("/", (req, res) => {
       }
 
       bcrypt.compare(req.body.mdp, user.mdp).then((isPasswordValid) => {
-        console.log(req.body.mdp);
-        console.log(user.mdp);
         if (!isPasswordValid) {
           const message = `Le mot de passe est incorrecte.`;
           return res.status(401).json({ message });

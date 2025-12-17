@@ -46,88 +46,129 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* Hero Section */
 .hero {
   text-align: center;
-  padding: 40px 20px;
-  background: linear-gradient(135deg, #f5f7fa, #e4ebf1);
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  margin-bottom: 40px;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, var(--background) 0%, #e2e8f0 100%);
+  border-radius: var(--radius);
+  margin-bottom: 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(69, 123, 157, 0.05) 0%, transparent 70%);
+  z-index: 0;
 }
 
 .hero-title {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 3rem;
+  font-weight: 800;
   margin-bottom: 20px;
-  color: #1d3557;
+  color: var(--primary);
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-image {
-  max-width: 80%;
+  max-width: 90%;
+  width: 600px;
   height: auto;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  margin: 30px 0;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transform: rotate(-1deg);
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-image:hover {
+  transform: rotate(0deg) scale(1.02);
 }
 
 .hero-description {
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #333;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--text-main);
+  position: relative;
+  z-index: 1;
 }
 
 .hero-description h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   margin-bottom: 15px;
-  color: #2a4365;
+  color: var(--secondary);
+  font-weight: 700;
 }
 
-.hero-description .highlight {
-  color: #1d72b8;
-  font-weight: bold;
+.highlight {
+  color: var(--secondary);
+  font-weight: 800;
+  position: relative;
+  border-bottom: 3px solid rgba(69, 123, 157, 0.2);
+}
+
+/* Latest Books Section */
+.nouveauté {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--primary);
+  margin: 60px 0 40px;
+  font-weight: 800;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.nouveauté::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--accent);
+  margin: 10px auto 0;
+  border-radius: 2px;
 }
 
 .books-container {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0 10px;
 }
 
 .books {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(auto);
-  gap: 20px;
-}
-img {
-  width: 100%;
-  height: 30%;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  justify-items: center;
 }
 
-.nouveauté {
-  text-align: center;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
+  .hero {
+    padding: 40px 15px;
+  }
+
   .hero-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
+  }
+
+  .hero-image {
+    width: 100%;
   }
 
   .hero-description {
     font-size: 1rem;
-    padding: 0 10px;
-  }
-
-  .books {
-    grid-template-columns: 1fr;
-    padding: 0 16px;
-  }
-
-  .hero-image {
-    max-width: 100%;
   }
 }
 </style>

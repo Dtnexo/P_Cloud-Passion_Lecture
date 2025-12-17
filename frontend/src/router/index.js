@@ -9,6 +9,8 @@ import RegisterView from '@/views/RegisterView.vue'
 import ouvrageServices from '../../services/ouvrageServices'
 import UserProfile from '@/views/UserProfile.vue'
 
+import AdminView from '@/views/AdminView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -16,6 +18,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminView,
     },
     {
       path: '/ouvrages',
@@ -56,7 +63,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (['details', 'addBook', 'updateBook', 'profile'].includes(to.name)) {
+  if (['details', 'addBook', 'updateBook', 'profile', 'admin'].includes(to.name)) {
     const bookId = to.params.id
     const token = localStorage.getItem('token')
     if (!token) return next('/login')
@@ -69,15 +76,21 @@ router.beforeEach(async (to, from, next) => {
     } catch {
       return next('/login')
     }
+
+    // Admin route protection
+    if (to.name === 'admin' && !admin) {
+      return next('/')
+    }
+
     if (['updateBook'].includes(to.name)) {
       try {
         const data = await ouvrageServices.getBookById(bookId)
         if (data.data.ouvrage.user_fk !== userId && admin == false) {
-          return next(from.fullPath) // Correction ici
+          return next(from.fullPath)
         }
         return next()
       } catch {
-        return next(from.fullPath) // Correction ici
+        return next(from.fullPath)
       }
     }
     return next()
